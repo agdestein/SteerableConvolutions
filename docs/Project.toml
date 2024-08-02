@@ -1,0 +1,16 @@
+[deps]
+Documenter = "e30172f5-a6a5-5a46-863b-614d45cd2de4"
+DocumenterCitations = "daee34ce-89f3-4625-b898-19384cb65244"
+DocumenterVitepress = "4710194d-e776-4893-9690-8d956a29c365"
+Examples = "ee9a67c0-c934-4b7d-bf63-3a54c792bd50"
+SteerableConvolutions = "32a0adf6-ff23-49da-a88f-3a4282d64f1a"
+Literate = "98b081ad-f1c9-55d3-8b20-4c87d4299306"
+
+[compat]
+Documenter = "1"
+DocumenterCitations = "1"
+DocumenterVitepress = "0.1"
+Examples = "1"
+Literate = "2"
+SteerableConvolutions = "1"
+julia = "1.10"

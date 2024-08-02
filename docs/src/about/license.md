@@ -1,0 +1,5 @@
+# License
+
+```@docs
+SteerableConvolutions.license
+```
