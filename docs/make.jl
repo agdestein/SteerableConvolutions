@@ -20,9 +20,7 @@ DocMeta.setdocmeta!(
 bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 
 # Generate examples
-examples = [
-    (true, "examples/example"),
-]
+examples = [(true, "examples/example")]
 
 # Convert scripts to executable markdown files
 output = "examples/generated"
