@@ -9,5 +9,6 @@
 [![Aqua QA](https://raw.githubusercontent.com/JuliaTesting/Aqua.jl/master/badge.svg)](https://github.com/JuliaTesting/Aqua.jl)
 
 Steerable convolutional layers for
-[Lux.jl](https://github.com/LuxDL/Lux.jl), similar to
+[Lux.jl](https://github.com/LuxDL/Lux.jl),
+inspired by the Python library
 [escnn](https://github.com/QUVA-Lab/escnn).

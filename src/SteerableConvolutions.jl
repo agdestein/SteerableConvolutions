@@ -10,6 +10,7 @@ $(EXPORTS)
 module SteerableConvolutions
 
 using DocStringExtensions
+using LinearAlgebra
 using Lux
 
 # Docstring templates
@@ -37,5 +38,20 @@ using Lux
 
 "$LICENSE"
 license = "MIT"
+
+include("group.jl")
+
+export AbstractGroup,
+    AbstractFiniteGroup,
+    Rotation,
+    CyclicGroup,
+    elements,
+    irrepmat,
+    irrep,
+    irreps,
+    regular_representation,
+    Representation,
+    ⊕,
+    directsum
 
 end
