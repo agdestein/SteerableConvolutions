@@ -76,7 +76,7 @@ export default defineConfig({
       "/examples/": {
         text: 'Examples',
         items: [
-          { text: 'Examples', link: '/examples' },
+          { text: 'Examples', link: '/examples/' },
           {
             text: 'Examples',
             items: [

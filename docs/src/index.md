@@ -19,12 +19,12 @@ hero:
       link: https://github.com/agdestein/SteerableConvolutions.jl
     - theme: alt
       text: Gallery
-      link: /examples
+      link: /examples/
 
 features:
   - icon: 🌊
     title: Examples
     details: Group-equivariant networks
-    link: /examples
+    link: /examples/
 ---
 ````
