@@ -1,9 +1,7 @@
+# Add SteerableConvolutions environment,
+# since test environment is not allowed to depend on the package directly
 push!(LOAD_PATH, joinpath(@__DIR__, ".."))
 
-using Aqua
-using SteerableConvolutions
-using Test
+using TestItemRunner
 
-@testset "SteerableConvolutions" begin
-    include("aqua.jl")
-end
+@run_package_tests
