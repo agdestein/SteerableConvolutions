@@ -57,6 +57,13 @@ export default defineConfig({
         text: 'Examples',
         items: [
           { text: 'Examples', link: '/examples/' },
+          {
+            text: 'Tutorials',
+            items: [
+              { text: 'Introduction', link: '/examples/generated/introduction' },
+              // { text: 'Scratch', link: '/examples/generated/scratch' },
+            ],
+          },
         ],
       },
       { text: 'API reference', link: '/api' },
@@ -78,9 +85,10 @@ export default defineConfig({
         items: [
           { text: 'Examples', link: '/examples/' },
           {
-            text: 'Examples',
+            text: 'Tutorials',
             items: [
-              { text: 'Example', link: '/examples/generated/example' },
+              { text: 'Introduction', link: '/examples/generated/introduction' },
+              // { text: 'Scratch', link: '/examples/generated/scratch' },
             ],
           },
         ],

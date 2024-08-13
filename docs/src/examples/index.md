@@ -2,12 +2,12 @@
 <script setup lang="ts">
 import Gallery from "../components/Gallery.vue";
 
-const examples = [
+const tutorials = [
   {
-    href: "generated/example",
-    src: "../example.png",
-    caption: "Example",
-    desc: "Steerable conv example",
+    href: "generated/introduction",
+    src: "../introduction.png",
+    caption: "Introduction",
+    desc: "Groups, elements, representations",
   },
 ];
 </script>
@@ -15,6 +15,8 @@ const examples = [
 
 # Examples
 
+## Tutorials
+
 ```@raw html
-<Gallery :images="examples" />
+<Gallery :images="tutorials" />
 ```
