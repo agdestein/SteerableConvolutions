@@ -10,6 +10,7 @@ end
 Base.show(io::IO, e::Element) = print(io, e.group, "(", e.n, ")")
 
 Base.one(e::Element) = one(e.group)
+Base.:(^)(e::Element, n) = prod(fill(e, n); init = one(e))
 
 abstract type AbstractRepresentation end
 struct IrreducibleRepresentation{G,A} <: AbstractRepresentation
