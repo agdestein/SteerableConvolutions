@@ -1,12 +1,22 @@
 abstract type AbstractGroup end
 abstract type AbstractFiniteGroup <: AbstractGroup end
+
+struct Element{G}
+    group::G
+    n::Int
+end
+
+(group::AbstractGroup)(n) = Element(group, n)
+Base.show(io::IO, e::Element) = print(io, e.group, "(", e.n, ")")
+
+Base.one(e::Element) = one(e.group)
+
 abstract type AbstractRepresentation end
 struct IrreducibleRepresentation{G,A} <: AbstractRepresentation
+    group::G
     id::Int
     mat::A
     type::Char
-    IrreducibleRepresentation(::Type{G}, id, mat::A, type) where {G,A} =
-        new{G,A}(id, mat, type)
 end
 struct Representation{A} <: AbstractRepresentation
     irreps::Vector{Int}
@@ -20,7 +30,7 @@ function ((; irreps, basis)::Representation)(g)
 end
 
 irreps(r::IrreducibleRepresentation) = [r.id]
-basis(r::IrreducibleRepresentation{G}) where {G} = one(r.mat(one(G)))
+basis(r::IrreducibleRepresentation) = one(r.mat(one(r.group)))
 
 irreps(r::Representation) = r.irreps
 basis(r::Representation) = r.basis
@@ -51,9 +61,9 @@ sum_of_squares_constituents(type) =
         error("irrep: unknown type $(i.type)")
     end
 
-function regular_representation(G)
-    N = order(G)
-    e = elements(G)
+function regular_representation(group)
+    N = order(group)
+    e = elements(group)
     representations = map(e) do g
         r = zeros(N, N)
         for (j, h) in enumerate(e)
@@ -64,9 +74,9 @@ function regular_representation(G)
     end
     characters = tr.(representations)
 
-    i = irreps(G)
+    i = irreps(group)
     multiplicities = map(i) do i
-        (; type) = irrep(G, i)
+        (; type) = irrep(group, i)
 
         m = map(characters, e) do c, g
             c * tr(irrepmat(inv(g), i))
@@ -77,13 +87,13 @@ function regular_representation(G)
         mint
     end
     ilist = vcat(fill.(i, multiplicities)...)
-    irrs = map(i -> irrep(G, i), ilist)
+    irrs = map(i -> irrep(group, i), ilist)
     P = directsum(irrs...)
 
     v = zeros(N)
     p = 0
     for (irr, m) in zip(i, multiplicities)
-        s = size(irrepmat(one(G), irr), 1)
+        s = size(irrepmat(one(group), irr), 1)
         @assert s ≥ m
         M = Matrix(I * sqrt(s), s, m)
         v[p+1:p+m*s] .= M[:]
@@ -108,36 +118,42 @@ Base.one(r::Rotation) = Rotation(zero(r.angle))
 Base.:*(f::Rotation, g::Rotation) = Rotation(f.angle + g.angle)
 Base.inv(f::Rotation) = Rotation(-f.angle)
 
-struct CyclicGroup{N} <: AbstractFiniteGroup
-    n::Int
-    CyclicGroup{N}(n) where {N} = new{N}(mod(n, N))
+struct CyclicGroup <: AbstractFiniteGroup
+    N::Int
 end
 
-order(::Type{CyclicGroup{N}}) where {N} = N
-Base.one(G::Type{CyclicGroup{N}}) where {N} = G(0)
-Base.:*(g::CyclicGroup{N}, h::CyclicGroup{N}) where {N} = CyclicGroup{N}(g.n + h.n)
-Base.inv(g::CyclicGroup) = typeof(g)(-g.n)
-elements(G::Type{CyclicGroup{N}}) where {N} = G.(0:N-1)
-irrepmat(g::CyclicGroup{N}, i) where {N} =
-    if 2i > N
+(group::CyclicGroup)(n) = Element(group, mod(n, group.N))
+order(group::CyclicGroup) = group.N
+Base.one(group::CyclicGroup) = Element(group, 0)
+Base.:*(g::Element{CyclicGroup}, h::Element{CyclicGroup}) = g.group(g.n + h.n)
+Base.inv(g::Element{CyclicGroup}) = g.group(-g.n)
+elements(group::CyclicGroup) = group.(0:group.N-1)
+irrepmat(g::Element{CyclicGroup}, i) =
+    if 2i > g.group.N
         error("irrepmat: 2i must be less N")
     elseif i == 0
         fill(1.0, 1, 1)
-    elseif iseven(N) && 2i == N
+    elseif iseven(g.group.N) && 2i == g.group.N
         fill(cospi(g.n), 1, 1)
     else
-        θ = 2 * i * g.n / N
+        θ = 2 * i * g.n / g.group.N
         c, s = cospi(θ), sinpi(θ)
         [c -s; s c]
     end
-irreptype(::Type{CyclicGroup{N}}, i) where {N} =
+irreptype(group::CyclicGroup, i) =
     if i == 0
         'R'
-    elseif iseven(N) && 2i == N
+    elseif iseven(group.N) && 2i == group.N
         'R'
     else
         'C'
     end
-irreps(::Type{CyclicGroup{N}}) where {N} = 0:N÷2
+irreps(group::CyclicGroup) = 0:div(group.N, 2)
 
-irrep(G, i) = IrreducibleRepresentation(G, i, g -> irrepmat(g, i), irreptype(G, i))
+irrep(group, i) =
+    IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
+
+struct FiberField{G,A}
+    group::G
+    x::A
+end
