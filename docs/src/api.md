@@ -1,5 +1,6 @@
 # API reference
 
-```@docs
-SteerableConvolutions
+```@autodocs
+Modules = [SteerableConvolutions]
+Private = false
 ```

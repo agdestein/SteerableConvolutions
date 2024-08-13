@@ -17,21 +17,25 @@ using Lux
 @template MODULES = """
                    $(DOCSTRING)
 
-                   ## Exports
+                   # Exports
 
                    $(EXPORTS)
                    """
-@template (FUNCTIONS, METHODS) = """
+@template (FUNCTIONS, METHODS, MACROS) = """
                                  $TYPEDSIGNATURES
 
                                  $DOCSTRING
+
+                                 # Methods
+
+                                 $METHODLIST
                                  """
 @template TYPES = """
                   $TYPEDEF
 
                   $DOCSTRING
 
-                  ## Fields
+                  # Fields
 
                   $FIELDS
                   """
@@ -43,14 +47,15 @@ include("group.jl")
 
 export AbstractGroup,
     AbstractFiniteGroup,
-    Rotation,
+    AbstractRepresentation,
+    RotationGroup,
     CyclicGroup,
     Element,
+    FiberField,
     IrreducibleRepresentation,
     Representation,
     basis,
     elements,
-    irrepmat,
     irrep,
     irreps,
     regular_representation,

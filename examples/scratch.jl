@@ -18,7 +18,6 @@ r2 = Representation([0, 1, 2], randn(5, 5))
 r3 = irrep(G, 3)
 
 directsum(map(i -> irrep(G, i), irreps(G))...)(elements(G)[1])
-display.(map(i -> irrep(G, i)(elements(G)[1]), irreps(G)));
 
 directsum(r1)
 r = r1 ⊕ r2 ⊕ r3
@@ -26,7 +25,7 @@ r(elements(G)[1])
 
 irrep(G, 1)
 
-irrepmat(g, 0)
+SteerableConvolutions.irrepmat(g, 0)
 
 r1.basis
 r1(g)

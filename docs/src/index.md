@@ -5,7 +5,7 @@ layout: home
 
 hero:
   name: SteerableConvolutions
-  text: Group-equivariant CNNs
+  text: Group-equivariant layers for Lux
   tagline: Build group-equivariant convolutional neural networks
   image:
     src: /logo.svg

@@ -22,7 +22,7 @@ bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 # Generate examples
 examples = [
     (true, "examples/introduction"),
-    (true, "examples/scratch"),
+    # (true, "examples/scratch"),
 ]
 
 # Convert scripts to executable markdown files

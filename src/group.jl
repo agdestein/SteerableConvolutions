@@ -1,26 +1,72 @@
+"Abstract group."
 abstract type AbstractGroup end
+
+"Abstract finite group."
 abstract type AbstractFiniteGroup <: AbstractGroup end
 
-struct Element{G}
+"""
+Group element.
+Group elements can be multiplied with `*`.
+To build group elements, call `group(n)` instead of `Element(group, n)`.
+"""
+struct Element{G,N}
+    "Group to which the element belongs."
     group::G
-    n::Int
+
+    "Group element content."
+    n::N
 end
+
+"Get elements of a finite group."
+function elements end
+
+"Get irrep of frequency `i`."
+function irrep end
 
 (group::AbstractGroup)(n) = Element(group, n)
 Base.show(io::IO, e::Element) = print(io, e.group, "(", e.n, ")")
-
 Base.one(e::Element) = one(e.group)
 Base.:(^)(e::Element, n) = prod(fill(e, n); init = one(e))
 
+"""
+Abstract group representation.
+
+A representation
+
+```math
+    \\rho : G \\to \\mathbb{C}^{d \\times d}
+```
+
+maps group elements ``g`` to matrices ``\\rho(g)`` of size ``d \\times d``.
+The representation must be such that
+
+```math
+    \\rho(gh) = \\rho(g) \\rho(h) \\quad \\forall (g, h) \\in G^2.
+```
+"""
 abstract type AbstractRepresentation end
+
+"Irreducible group representation (\"irrep\")."
 struct IrreducibleRepresentation{G,A} <: AbstractRepresentation
+    "Group."
     group::G
+
+    "Irrep ID."
     id::Int
+
+    "Irrep matrix constructor. Can be called as `mat(g)`."
     mat::A
+
+    "Irrep type, can be `'R'`, `'C'`, or `'Q'`."
     type::Char
 end
+
+"General group representation. It is stored as a direct sum of irreps with a basis change."
 struct Representation{A} <: AbstractRepresentation
+    "List of irrep frequencies by order of appearance in direct sum."
     irreps::Vector{Int}
+
+    "Change of basis matrix."
     basis::A
 end
 
@@ -30,12 +76,20 @@ function ((; irreps, basis)::Representation)(g)
     basis * i * inv(basis)
 end
 
+"Get irreps that block-diagonalizes a representation."
+function irreps end
+
+"Get change of basis matrix for block-diagonal representation decomposition."
+function basis end
+
 irreps(r::IrreducibleRepresentation) = [r.id]
 basis(r::IrreducibleRepresentation) = one(r.mat(one(r.group)))
 
 irreps(r::Representation) = r.irreps
 basis(r::Representation) = r.basis
 
+"Direct sum of matrices or representations."
+function directsum end
 function directsum(x...)
     n = size.(x, 1)
     y = fill!(similar(x[1], sum(n), sum(n)), 0)
@@ -49,7 +103,9 @@ function directsum(x...)
 end
 directsum(r::AbstractRepresentation...) =
     Representation(vcat(irreps.(r)...), directsum(basis.(r)...))
-⊕ = directsum
+
+"Alias for [`directsum`](@ref)."
+const ⊕ = directsum
 
 sum_of_squares_constituents(type) =
     if type == 'R'
@@ -62,6 +118,7 @@ sum_of_squares_constituents(type) =
         error("irrep: unknown type $(i.type)")
     end
 
+"Get regular represenation of a group."
 function regular_representation(group)
     N = order(group)
     e = elements(group)
@@ -110,16 +167,17 @@ function regular_representation(group)
     Representation(ilist, basis)
 end
 
-struct Rotation{T} <: AbstractGroup
-    angle::T
-    Rotation(angle) = new{typeof(angle)}(mod2pi(angle))
-end
+"Rotation group in the plane."
+struct RotationGroup <: AbstractGroup end
 
-Base.one(r::Rotation) = Rotation(zero(r.angle))
-Base.:*(f::Rotation, g::Rotation) = Rotation(f.angle + g.angle)
-Base.inv(f::Rotation) = Rotation(-f.angle)
+(G::RotationGroup)(angle) = Element(G, mod2pi(angle))
+Base.one(G::RotationGroup) = G(0)
+Base.:*(g::Element{RotationGroup}...) = g[1].group(sum(getfield.(g, :angle)))
+Base.inv(g::Element{RotationGroup}) = g.group(-g.angle)
 
+"Cyclic group ``C_N`` of order `N`."
 struct CyclicGroup <: AbstractFiniteGroup
+    "Number of rotations in the group."
     N::Int
 end
 
@@ -154,6 +212,7 @@ irreps(group::CyclicGroup) = 0:div(group.N, 2)
 irrep(group, i) =
     IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
 
+"Fiber field."
 struct FiberField{G,A}
     group::G
     x::A
