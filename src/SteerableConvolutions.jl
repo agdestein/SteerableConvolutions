@@ -12,6 +12,7 @@ module SteerableConvolutions
 using DocStringExtensions
 using LinearAlgebra
 using Lux
+using TensorOperations
 
 # Docstring templates
 @template MODULES = """
@@ -51,7 +52,9 @@ export AbstractGroup,
     RotationGroup,
     CyclicGroup,
     Element,
+    FieldType,
     FiberField,
+    GSpace,
     IrreducibleRepresentation,
     Representation,
     basis,

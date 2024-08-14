@@ -10,35 +10,19 @@ end                                            #src
 
 using SteerableConvolutions
 
-G = CyclicGroup(8)
-g = G(3)
+G = CyclicGroup(4)
+gspace = GSpace(G, 2)
+fieldtype = FieldType(gspace, [irrep(G, 1)])
+x = zeros(5, 5, 2)
+x[2, 1, 1] = 2.2
+x[1, 3, 2] = 8.3
+f = FiberField(fieldtype, x)
+f.x
 
-r1 = Representation([0, 1, 2, 3, 4], randn(8, 8))
-r2 = Representation([0, 1, 2], randn(5, 5))
-r3 = irrep(G, 3)
 
-directsum(map(i -> irrep(G, i), irreps(G))...)(elements(G)[1])
+g = Element(G, 2)
 
-directsum(r1)
-r = r1 ⊕ r2 ⊕ r3
-r(elements(G)[1])
+fnew = g * f
 
-irrep(G, 1)
-
-SteerableConvolutions.irrepmat(g, 0)
-
-r1.basis
-r1(g)
-
-e = elements(G)
-r = regular_representation(G)
-
-r.irreps
-r.basis
-
-irrep(G, 4)(e[1])
-
-r(e[5])
-round.(Int, r(e[8]))
-
-elements(G)
+f.x
+fnew.x
