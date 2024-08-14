@@ -19,7 +19,6 @@ x[1, 3, 2] = 8.3
 f = FiberField(fieldtype, x)
 f.x
 
-
 g = Element(G, 2)
 
 fnew = g * f

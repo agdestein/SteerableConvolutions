@@ -212,7 +212,6 @@ irreps(group::CyclicGroup) = 0:div(group.N, 2)
 irrep(group, i) =
     IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
 
-
 "GSpace."
 struct GSpace{G}
     "Group."
@@ -243,7 +242,7 @@ struct FiberField{F,A}
 
     function FiberField(fieldtype, x)
         @assert size(x, 1) == size(x, 2) "Domain must be square"
-        new{typeof(fieldtype), typeof(x)}(fieldtype, x)
+        new{typeof(fieldtype),typeof(x)}(fieldtype, x)
     end
 end
 
