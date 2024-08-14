@@ -60,6 +60,7 @@ import{_ as s,c as a,o as n,a7 as p}from"./chunks/framework.CwArVPdM.js";const h
 <span class="line"><span>  [7d188eb4] JSONSchema v1.4.0</span></span>
 <span class="line"><span>  [63c18a36] KernelAbstractions v0.9.23</span></span>
 <span class="line"><span>  [929cbde3] LLVM v8.1.0</span></span>
+<span class="line"><span>  [8ac3fa9e] LRUCache v1.6.1</span></span>
 <span class="line"><span>  [10f19ff3] LayoutPointers v0.1.17</span></span>
 <span class="line"><span>  [0e77f7df] LazilyInitializedFields v1.2.2</span></span>
 <span class="line"><span>  [98b081ad] Literate v2.19.0</span></span>
@@ -80,11 +81,13 @@ import{_ as s,c as a,o as n,a7 as p}from"./chunks/framework.CwArVPdM.js";const h
 <span class="line"><span>  [6fe1bfb0] OffsetArrays v1.14.1</span></span>
 <span class="line"><span>  [3bd65402] Optimisers v0.3.3</span></span>
 <span class="line"><span>  [bac558e1] OrderedCollections v1.6.3</span></span>
+<span class="line"><span>  [65ce6f38] PackageExtensionCompat v1.0.2</span></span>
 <span class="line"><span>  [69de0a69] Parsers v2.8.1</span></span>
 <span class="line"><span>  [f517fe37] Polyester v0.7.16</span></span>
 <span class="line"><span>  [1d0040c9] PolyesterWeave v0.2.2</span></span>
 <span class="line"><span>  [aea7be01] PrecompileTools v1.2.1</span></span>
 <span class="line"><span>  [21216c6a] Preferences v1.4.3</span></span>
+<span class="line"><span>  [43287f4e] PtrArrays v1.2.0</span></span>
 <span class="line"><span>  [189a3867] Reexport v1.2.2</span></span>
 <span class="line"><span>  [2792f1a3] RegistryInstances v0.1.0</span></span>
 <span class="line"><span>  [ae029012] Requires v1.3.0</span></span>
@@ -98,15 +101,20 @@ import{_ as s,c as a,o as n,a7 as p}from"./chunks/framework.CwArVPdM.js";const h
 <span class="line"><span>  [1e83bf80] StaticArraysCore v1.4.3</span></span>
 <span class="line"><span>  [32a0adf6] SteerableConvolutions v1.0.0 \`~/work/SteerableConvolutions.jl/SteerableConvolutions.jl\`</span></span>
 <span class="line"><span>  [7792a7ef] StrideArraysCore v0.5.7</span></span>
+<span class="line"><span>  [5e0ebb24] Strided v2.1.1</span></span>
+<span class="line"><span>  [4db3bf67] StridedViews v0.3.1</span></span>
 <span class="line"><span>  [69024149] StringEncodings v0.3.7</span></span>
 <span class="line"><span>  [856f2bd8] StructTypes v1.10.0</span></span>
+<span class="line"><span>  [6aa20fa7] TensorOperations v5.0.0</span></span>
 <span class="line"><span>  [8290d209] ThreadingUtilities v0.5.2</span></span>
 <span class="line"><span>  [3bb67fe8] TranscodingStreams v0.11.2</span></span>
+<span class="line"><span>  [9d95972d] TupleTools v1.5.0</span></span>
 <span class="line"><span>  [5c2747f8] URIs v1.5.1</span></span>
 <span class="line"><span>  [3a884ed6] UnPack v1.0.2</span></span>
 <span class="line"><span>  [0fe1646c] UnrolledUtilities v0.1.2</span></span>
 <span class="line"><span>  [013be700] UnsafeAtomics v0.2.1</span></span>
 <span class="line"><span>  [d80eeb9a] UnsafeAtomicsLLVM v0.2.0</span></span>
+<span class="line"><span>  [409d34a3] VectorInterface v0.4.6</span></span>
 <span class="line"><span>  [3d5dd08c] VectorizationBase v0.21.70</span></span>
 <span class="line"><span>  [d49dbf32] WeightInitializers v1.0.1</span></span>
 <span class="line"><span>  [ddb6d928] YAML v0.4.12</span></span>
@@ -163,4 +171,4 @@ import{_ as s,c as a,o as n,a7 as p}from"./chunks/framework.CwArVPdM.js";const h
 <span class="line"><span>  [8e850b90] libblastrampoline_jll v5.8.0+1</span></span>
 <span class="line"><span>  [8e850ede] nghttp2_jll v1.52.0+1</span></span>
 <span class="line"><span>  [3f19e933] p7zip_jll v17.4.0+2</span></span>
-<span class="line"><span>Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use \`status --outdated -m\`</span></span></code></pre></div>`,9),i=[l];function c(t,o,r,d,v,b){return n(),a("div",null,i)}const u=s(e,[["render",c]]);export{h as __pageData,u as default};
+<span class="line"><span>Info Packages marked with ⌅ have new versions available but compatibility constraints restrict them from upgrading. To see why use \`status --outdated -m\`</span></span></code></pre></div>`,9),i=[l];function c(t,o,r,d,v,f){return n(),a("div",null,i)}const u=s(e,[["render",c]]);export{h as __pageData,u as default};
