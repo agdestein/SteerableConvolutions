@@ -60,7 +60,8 @@ export default defineConfig({
           {
             text: 'Tutorials',
             items: [
-              { text: 'Introduction', link: '/examples/generated/introduction' },
+              { text: 'Groups and representations', link: '/examples/generated/introduction' },
+              { text: 'Equivariance', link: '/examples/generated/equivariance' },
               // { text: 'Scratch', link: '/examples/generated/scratch' },
             ],
           },
@@ -87,7 +88,8 @@ export default defineConfig({
           {
             text: 'Tutorials',
             items: [
-              { text: 'Introduction', link: '/examples/generated/introduction' },
+              { text: 'Groups and representations', link: '/examples/generated/introduction' },
+              { text: 'Equivariance', link: '/examples/generated/equivariance' },
               // { text: 'Scratch', link: '/examples/generated/scratch' },
             ],
           },

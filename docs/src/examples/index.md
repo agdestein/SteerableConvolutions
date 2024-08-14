@@ -6,8 +6,14 @@ const tutorials = [
   {
     href: "generated/introduction",
     src: "../introduction.png",
-    caption: "Introduction",
-    desc: "Groups, elements, representations",
+    caption: "Groups and representations",
+    desc: "Introductory tutorial to groups and representations",
+  },
+  {
+    href: "generated/equivariance",
+    src: "../introduction.png",
+    caption: "Equivariance",
+    desc: "Introduction to geometric transforms and equivariance",
   },
 ];
 </script>

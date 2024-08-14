@@ -22,6 +22,7 @@ bib = CitationBibliography(joinpath(@__DIR__, "references.bib"))
 # Generate examples
 examples = [
     (true, "examples/introduction"),
+    (true, "examples/equivariance"),
     # (true, "examples/scratch"),
 ]
 
