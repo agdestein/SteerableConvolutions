@@ -6,7 +6,7 @@ end                                            #src
 
 # # Equivariance
 #
-# Introduction to [`GSpaces`](@ref), [`FieldTypes`](@ref), and [`FiberFields`](@ref)
+# Introduction to [`GSpace`](@ref)s, [`FieldType`](@ref)s, and [`FiberField`](@ref)s
 # using the SteerableConvolutions.jl package.
 
 using SteerableConvolutions
