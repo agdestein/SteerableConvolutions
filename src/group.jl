@@ -234,7 +234,7 @@ end
 
 "Fiber field."
 struct FiberField{F,A}
-    "GSpace."
+    "Field type."
     fieldtype::F
 
     "Field content."

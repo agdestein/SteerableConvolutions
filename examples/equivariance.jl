@@ -37,39 +37,75 @@ x = zeros(n + 1, n + 1, 3)
 @. x[:, :, 1] = sinpi(10 * grid) * mask
 @. x[:, :, 2] = sinpi(2 * grid) * cospi(3 * grid') * mask
 @. x[:, :, 3] = -cospi(2 * grid) * sinpi(3 * grid') * mask
-f = FiberField(fieldtype, x)
+field = FiberField(fieldtype, x)
 
 # We now apply a group transform (rotation by 90 degrees):
 g = G(1)
-fnew = g * f
+newfield = g * field
 
 # Plot the all fields
-function plot(f)
-    s = @. sqrt(f.x[:, :, 2]^2 + f.x[:, :, 3]^2)
+function plot(field)
+    (; x) = field
+    s = @. sqrt(field.x[:, :, 2]^2 + field.x[:, :, 3]^2)
     color = s[:] ./ maximum(s)
+    limits = (0, 1, 0, 1)
     fig = Figure(; size = (800, 400))
-    heatmap(
-        fig[1, 1],
-        grid,
-        grid,
-        f.x[:, :, 1];
-        axis = (; limits = (0, 1, 0, 1), title = "Scalar field"),
-    )
+    heatmap(fig[1, 1], grid, grid, x[:, :, 1]; axis = (; limits, title = "Scalar field"))
     arrows(
         fig[1, 2],
         grid,
         grid,
-        f.x[:, :, 2],
-        f.x[:, :, 3];
+        x[:, :, 2],
+        x[:, :, 3];
         lengthscale = 0.1,
         color,
-        axis = (; limits = (0, 1, 0, 1), title = "Vector field"),
+        axis = (; limits, title = "Vector field"),
     )
     fig
 end
 
 # Here are the original fields:
-plot(f)
+plot(field)
 
 # Here are the rotated fields. For the vector field, note also how both the domain and the arrows have been rotated.
-plot(fnew)
+plot(newfield)
+
+# ## Equivariance
+#
+# A function ``f`` mapping one fiber field ``u`` with representation ``\rho_\text{in}``
+# to another fiber field of representation ``\rho_\text{out}`` is
+# said to be ``G``-equivariant if
+#
+# ```math
+#     f(\rho_\text{in}(g) u) = \rho_\text{out}(g) f(u)
+# ```
+#
+# for all ``g \in G``.
+#
+# For example, consider ``\rho_\text{in}`` to be the representation from above,
+# and ``\rho_\text{out}`` to be the trivial representation:
+fieldtype_out = FieldType(gspace, [irrep(gspace.group, 0)])
+
+# The following function is not equivariant:
+function notequivariant(u)
+    (; x) = u
+    y = x[:, :, 2:2] + x[:, :, 3:3]
+    FiberField(fieldtype_out, y)
+end
+
+# since
+a = g * notequivariant(field)
+b = notequivariant(g * field)
+a.x ≈ b.x
+
+# is `false`. The following function is equivariant:
+function norm2(u)
+    (; x) = u
+    y = @. x[:, :, 2:2]^2 + x[:, :, 3:3]^2
+    FiberField(fieldtype_out, y)
+end
+
+# since
+a = g * norm2(field)
+b = norm2(g * field)
+a.x ≈ b.x
