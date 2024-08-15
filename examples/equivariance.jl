@@ -32,11 +32,11 @@ fieldtype = FieldType(gspace, representations)
 # We wrap it in a [`FiberField`](@ref) from a field type and data.
 n = 50
 grid = LinRange(0, 1, n + 1)
-mask = @. 0 < grid < 1 / 2 && 0 < grid' < 3 / 4
+mask = @. (1 - grid^2) * (1 - (grid')^2)
 x = zeros(n + 1, n + 1, 3)
-@. x[:, :, 1] = sinpi(10 * grid) * grid'
-@. x[:, :, 2] = mask * sinpi(2 * grid) * cospi(8 / 3 * grid')
-@. x[:, :, 3] = -mask * cospi(2 * grid) * sinpi(8 / 3 * grid')
+@. x[:, :, 1] = sinpi(10 * grid) * mask
+@. x[:, :, 2] = sinpi(2 * grid) * cospi(3 * grid') * mask
+@. x[:, :, 3] = -cospi(2 * grid) * sinpi(3 * grid') * mask
 f = FiberField(fieldtype, x)
 
 # We now apply a group transform (rotation by 90 degrees):

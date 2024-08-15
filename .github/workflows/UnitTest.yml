@@ -38,9 +38,9 @@ jobs:
           version: ${{ matrix.version }}
           arch: ${{ matrix.arch }}
       - uses: julia-actions/cache@v2
-      # - uses: julia-actions/julia-buildpkg@v1
-      - name: Build packages
-        run: julia --color=yes setup.jl
+      - uses: julia-actions/julia-buildpkg@v1
+      # - name: Build packages
+      #   run: julia --color=yes setup.jl
       - name: Test SteerableConvolutions
         shell: julia --color=yes {0}
         run: |
