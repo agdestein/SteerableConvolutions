@@ -70,7 +70,7 @@ struct Representation{A} <: AbstractRepresentation
     basis::A
 end
 
-((; mat)::IrreducibleRepresentation)(g) = mat(g)
+(ψ::IrreducibleRepresentation)(g) = ψ.mat(g)
 function ((; irreps, basis)::Representation)(g)
     i = directsum(map(i -> irrepmat(g, i), irreps)...)
     basis * i * inv(basis)
@@ -118,7 +118,7 @@ sum_of_squares_constituents(type) =
         error("irrep: unknown type $(i.type)")
     end
 
-"Get regular represenation of a group."
+"Get the regular representation of a group."
 function regular_representation(group)
     N = order(group)
     e = elements(group)
@@ -175,7 +175,7 @@ Base.one(G::RotationGroup) = G(0)
 Base.:*(g::Element{RotationGroup}...) = g[1].group(sum(getfield.(g, :angle)))
 Base.inv(g::Element{RotationGroup}) = g.group(-g.angle)
 
-"Cyclic group ``C_N`` of order `N`."
+"Cyclic group ``C_N`` of order ``N``."
 struct CyclicGroup <: AbstractFiniteGroup
     "Number of rotations in the group."
     N::Int
@@ -272,16 +272,10 @@ function Base.:*(g::Element, f::FiberField)
     Ry = findfirst(a -> abs(a) == 1, A[2, :])
     sx = sign(A[1, Rx])
     sy = sign(A[2, Ry])
-    i = if Rx == 1
-        sx == 1 ? (1:n) : (n:-1:1)
-    elseif Rx == 2
-        sx == 1 ? (1:n)' : (n:-1:1)'
-    end
-    j = if Ry == 1
-        sy == 1 ? (1:n) : (n:-1:1)
-    elseif Ry == 2
-        sy == 1 ? (1:n)' : (n:-1:1)'
-    end
+    i = sx == 1 ? (1:n) : (n:-1:1)
+    i = Rx == 1 ? i : i'
+    j = sy == 1 ? (1:n) : (n:-1:1)
+    j = Ry == 1 ? j : j'
     I = CartesianIndex.(i, j)
     y = y[I, :]
 

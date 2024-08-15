@@ -29,7 +29,7 @@ g = G(3)
 typeof(g), g.group, g.n
 
 # Since the group is finite, all the group elements can
-# be accessed with the `elements` function:
+# be accessed with the [`elements`](@ref) function:
 elements(G)
 
 # Group elements can be multiplied.
@@ -38,7 +38,7 @@ elements(G)
 # Note how the angles start over after 8 rotations.
 G(1) * G(2), G(3) * G(7)
 
-# The unit element ``e = 0`` represent a rotation by zero degrees:
+# The unit element ``e = 0`` represents a rotation by zero degrees:
 one(G), one(g), G(0), G(2) * G(-2)
 
 # The unit elements does not modify the angle:
@@ -49,7 +49,7 @@ inv(g), g^2
 
 # ## Group representations
 #
-# A `Representation` of a group ``G`` is a matrix-valued function over the group:
+# A [`Representation`](@ref) of a group ``G`` is a matrix-valued function over the group:
 #
 # ```math
 # \rho: G \to \mathbb{R}^{d \times d}
@@ -64,7 +64,7 @@ inv(g), g^2
 ρ = regular_representation(G)
 round.(Int, ρ(g))
 
-# Internally, all `Representation`s are stored in a different basis, leading
+# Internally, all [`Representation`](@ref)s are stored in a different basis, leading
 # to some round-off errors:
 ρ(g)
 
@@ -86,14 +86,14 @@ round.(Int, ρ(one(G)))
 
 # ### Irreducible representations
 #
-# The regular representation is composed of `IrreducibleRepresentation`s (irreps).
+# The regular representation is composed of [`IrreducibleRepresentation`](@ref)s (irreps).
 # For the circular group, there are ``N / 2`` irreps of different frequencies.
 # With frequency ``0``, we get the trivial (constant) representation ``\psi_0``,
 # which is a ``1 \times 1`` identity matrix for all group elements:
 ψ₀ = irrep(G, 0)
 ψ₀(G(0)), ψ₀(G(1)), ψ₀(G(2))
 
-# The next irrep ``\psi_1`` has frequency ``1`` and is takes the value of a
+# The next irrep ``\psi_1`` has frequency ``1`` and takes the value of a
 # ``2 \times 2`` rotation matrix ``\psi_1(g) = R(2 \pi g / N)``, with
 #
 # ```math
@@ -113,8 +113,8 @@ irreps(G)
 #
 # The direct sum of two represenations is a new representation that gives
 # the block diagonal concatenation of the original matrices.
-# It can be called using the `directsum` function or the `⊕` operator
-# (type `\oplus<tab>`):
+# It can be called using the [`directsum`](@ref) function or
+# the [`⊕`](@ref) operator (type `\oplus<tab>`):
 ρ_sum = ψ₀ ⊕ ψ₀ ⊕ ψ₀ ⊕ ψ₁
 ρ_sum(G(1))
 
@@ -140,7 +140,7 @@ B = basis(ρ)
 I = irreps(ρ)
 
 # We can assemble the direct sum:
-ρ_block = directsum(map(i -> irrep(G, i), I)...)
+ρ_block = ⊕(map(i -> irrep(G, i), I)...)
 ρ_block(g)
 
 # We can verify that the direct sum is equal to the regular representation
