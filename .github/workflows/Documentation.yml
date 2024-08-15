@@ -26,10 +26,10 @@ jobs:
       - uses: actions/checkout@v4
       - uses: julia-actions/setup-julia@v2
         with:
-          version: '1'
+          version: '1.11' # Get access to the [sources] feature
       - uses: julia-actions/cache@v2
       - name: Configure doc environment
-        run: julia --color=yes docs/setup.jl
+        run: julia --color=yes --project=docs -e 'using Pkg; Pkg.instantiate()'
       - uses: julia-actions/julia-docdeploy@v1
         with:
           install-package: false
