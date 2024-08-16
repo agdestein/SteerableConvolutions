@@ -31,13 +31,14 @@ Base.:(^)(e::Element, n) = prod(fill(e, n); init = one(e))
 """
 Abstract group representation.
 
-A representation
+A linear representation
 
 ```math
-    \\rho : G \\to \\mathbb{C}^{d \\times d}
+    \\rho : G \\to \\operatorname{GL}(\\mathbb{R}^d)
 ```
 
-maps group elements ``g`` to matrices ``\\rho(g)`` of size ``d \\times d``.
+maps group elements ``g`` to invertible matrices ``\\rho(g)``
+of size ``d \\times d``.
 The representation must be such that
 
 ```math
@@ -64,28 +65,28 @@ end
 "General group representation. It is stored as a direct sum of irreps with a basis change."
 struct Representation{A} <: AbstractRepresentation
     "List of irrep frequencies by order of appearance in direct sum."
-    irreps::Vector{Int}
+    frequencies::Vector{Int}
 
     "Change of basis matrix."
     basis::A
 end
 
 (ψ::IrreducibleRepresentation)(g) = ψ.mat(g)
-function ((; irreps, basis)::Representation)(g)
-    i = directsum(map(i -> irrepmat(g, i), irreps)...)
+function ((; frequencies, basis)::Representation)(g)
+    i = directsum(map(i -> irrepmat(g, i), frequencies)...)
     basis * i * inv(basis)
 end
 
-"Get irreps that block-diagonalizes a representation."
-function irreps end
+"Get irrep frequencies used to block-diagonalize a representation."
+function frequencies end
 
 "Get change of basis matrix for block-diagonal representation decomposition."
 function basis end
 
-irreps(r::IrreducibleRepresentation) = [r.id]
+frequencies(r::IrreducibleRepresentation) = [r.id]
 basis(r::IrreducibleRepresentation) = one(r.mat(one(r.group)))
 
-irreps(r::Representation) = r.irreps
+frequencies(r::Representation) = r.frequencies
 basis(r::Representation) = r.basis
 
 "Direct sum of matrices or representations."
@@ -102,7 +103,7 @@ function directsum(x...)
     y
 end
 directsum(r::AbstractRepresentation...) =
-    Representation(vcat(irreps.(r)...), directsum(basis.(r)...))
+    Representation(vcat(frequencies.(r)...), directsum(basis.(r)...))
 
 "Alias for [`directsum`](@ref)."
 const ⊕ = directsum
@@ -132,7 +133,7 @@ function regular_representation(group)
     end
     characters = tr.(representations)
 
-    i = irreps(group)
+    i = frequencies(group)
     multiplicities = map(i) do i
         (; type) = irrep(group, i)
 
@@ -207,7 +208,7 @@ irreptype(group::CyclicGroup, i) =
     else
         'C'
     end
-irreps(group::CyclicGroup) = 0:div(group.N, 2)
+frequencies(group::CyclicGroup) = 0:div(group.N, 2)
 
 irrep(group, i) =
     IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))

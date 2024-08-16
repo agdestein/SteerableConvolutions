@@ -60,7 +60,7 @@ export AbstractGroup,
     basis,
     elements,
     irrep,
-    irreps,
+    frequencies,
     regular_representation,
     ⊕,
     directsum

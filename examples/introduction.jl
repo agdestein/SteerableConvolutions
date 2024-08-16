@@ -49,13 +49,15 @@ inv(g), g^2
 
 # ## Group representations
 #
-# A [`Representation`](@ref) of a group ``G`` is a matrix-valued function over the group:
+# A linear [`Representation`](@ref) of a group ``G`` is a matrix-valued function
+# over the group:
 #
 # ```math
-# \rho: G \to \mathbb{R}^{d \times d}
+# \rho: G \to \operatorname{GL}(\mathbb{R}^d),
 # ```
 #
-# where ``d`` is the size of the representation.
+# where ``d`` is the size of the representation and ``\operatorname{GL}(\mathbb{R}^d)``
+# is the space of invertible matrices of size ``d \times d``.
 #
 # ### Regular representation
 #
@@ -106,8 +108,8 @@ round.(Int, ρ(one(G)))
 ψ₁ = irrep(G, 1)
 ψ₁(g)
 
-# All the valid irrep frequencies are accessible through the `irreps` function:
-irreps(G)
+# All the valid irrep frequencies are accessible through the `frequencies` function:
+frequencies(G)
 
 # ### Direct sums
 #
@@ -137,7 +139,7 @@ irreps(G)
 B = basis(ρ)
 
 # The irreps of ρ are stored as a list of frequencies ``I``:
-I = irreps(ρ)
+I = frequencies(ρ)
 
 # We can assemble the direct sum:
 ρ_block = ⊕(map(i -> irrep(G, i), I)...)

@@ -12,7 +12,7 @@ end
     I = [0, 0, 1, 4]
     B = randn(5, 5)
     ρ = Representation(I, B)
-    @test irreps(ρ) == I
+    @test frequencies(ρ) == I
     @test basis(ρ) == B
     g, h = G(3), G(2)
     @test ρ(one(G)) ≈ one(ρ(g))
@@ -20,9 +20,9 @@ end
     @test ρ(g * h) ≈ ρ(g) * ρ(h)
 end
 
-@testitem "Irreps" begin
-    @test irreps(CyclicGroup(8)) == 0:4
-    @test irreps(CyclicGroup(9)) == 0:4
+@testitem "Irrep frequencies" begin
+    @test frequencies(CyclicGroup(8)) == 0:4
+    @test frequencies(CyclicGroup(9)) == 0:4
     G = CyclicGroup(8)
     @test all(==([1;;]), irrep(G, 0).(elements(G)))
 end
@@ -33,5 +33,5 @@ end
     ρ2 = Representation([4], randn(1, 1))
     ρ3 = irrep(G, 1)
     ρ = ρ1 ⊕ ρ2 ⊕ ρ3
-    @test irreps(ρ) == vcat(irreps(ρ1), irreps(ρ2), irreps(ρ3))
+    @test frequencies(ρ) == vcat(frequencies(ρ1), frequencies(ρ2), frequencies(ρ3))
 end
