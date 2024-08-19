@@ -24,7 +24,14 @@ function elements end
 function irrep end
 
 (group::AbstractGroup)(n) = Element(group, n)
-Base.show(io::IO, e::Element) = print(io, e.group, "(", e.n, ")")
+function Base.show(io::IO, e::Element)
+    print(io, e.group)
+    if e.n isa Tuple
+        print(io, e.n)
+    else
+        print(io, "(", e.n, ")")
+    end
+end
 Base.one(e::Element) = one(e.group)
 Base.:(^)(e::Element, n) = prod(fill(e, n); init = one(e))
 
@@ -168,6 +175,9 @@ function regular_representation(group)
     Representation(ilist, basis)
 end
 
+irrep(group, i) =
+    IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
+
 "Rotation group in the plane."
 struct RotationGroup <: AbstractGroup end
 
@@ -196,9 +206,7 @@ irrepmat(g::Element{CyclicGroup}, i) =
     elseif iseven(g.group.N) && 2i == g.group.N
         fill(cospi(g.n), 1, 1)
     else
-        θ = 2 * i * g.n / g.group.N
-        c, s = cospi(θ), sinpi(θ)
-        [c -s; s c]
+        rotmat(2π * i * g.n / g.group.N)
     end
 irreptype(group::CyclicGroup, i) =
     if i == 0
@@ -210,5 +218,35 @@ irreptype(group::CyclicGroup, i) =
     end
 frequencies(group::CyclicGroup) = 0:div(group.N, 2)
 
-irrep(group, i) =
-    IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
+"Dihedral group ``D_N``."
+struct DihedralGroup <: AbstractFiniteGroup
+    "Number of rotations in the group."
+    N::Int
+end
+
+(group::DihedralGroup)(flip, n) = Element(group, (flip, mod(n, group.N)))
+order(group::DihedralGroup) = 2 * group.N
+Base.one(group::DihedralGroup) = Element(group, (false, 0))
+Base.:*(g::Element{DihedralGroup}, h::Element{DihedralGroup}) =
+    g.group(g.n[1] ⊻ h.n[1], g.n[2] + (g.n[1] ? -1 : 1) * h.n[2])
+Base.inv(g::Element{DihedralGroup}) = g.group(g.n[1], -(g.n[1] ? -1 : 1) * g.n[2])
+elements(group::DihedralGroup) = group.(Iterators.product((false, true), 0:group.N-1))
+irrepmat(g::Element{DihedralGroup}, (flip, i)) =
+    if flip
+        if i == 0
+            (g.n[1] ? -1 : 1) * fill(1.0, 1, 1)
+        elseif iseven(g.group.N) && 2i == g.group.N
+            (g.n[1] ? -1 : 1) * fill(cospi(g.n[2]), 1, 1)
+        else
+            fliprotmat(g.n[1], 2π * i * g.n[2] / g.group.N)
+        end
+    else
+        if i == 0
+            # Trivial representation
+            fill(1.0, 1, 1)
+        elseif iseven(g.group.N) && 2i == g.group.N
+            fill(cospi(g.n[2]), 1, 1)
+        else
+            error("This combination is not an irrep")
+        end
+    end

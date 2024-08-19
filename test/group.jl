@@ -35,3 +35,15 @@ end
     ρ = ρ1 ⊕ ρ2 ⊕ ρ3
     @test frequencies(ρ) == vcat(frequencies(ρ1), frequencies(ρ2), frequencies(ρ3))
 end
+
+@testitem "DihedralGroup" begin
+    G = DihedralGroup(8)
+    for f in (false, true)
+        @test G(f, 8) == G(f, 0)
+        @test G(f, 8) == G(f, 0)
+        @test G(f, -1) == G(f, 7)
+        @test one(G) * G(f, 3) == G(f, 3)
+        @test G(f, 1) * G(f, 2) == G(f, 3) broken = f
+        @test inv(G(f, 3)) * G(f, 3) == one(G)
+    end
+end

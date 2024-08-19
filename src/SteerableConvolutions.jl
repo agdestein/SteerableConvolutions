@@ -44,6 +44,7 @@ using TensorOperations
 "$LICENSE"
 license = "MIT"
 
+include("utils.jl")
 include("group.jl")
 include("field.jl")
 
@@ -52,6 +53,7 @@ export AbstractGroup,
     AbstractRepresentation,
     RotationGroup,
     CyclicGroup,
+    DihedralGroup,
     Element,
     FieldType,
     FiberField,
