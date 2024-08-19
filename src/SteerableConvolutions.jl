@@ -45,6 +45,7 @@ using TensorOperations
 license = "MIT"
 
 include("group.jl")
+include("field.jl")
 
 export AbstractGroup,
     AbstractFiniteGroup,
