@@ -1,4 +1,4 @@
-import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h=JSON.parse('{"title":"Package versions","description":"","frontmatter":{},"headers":[],"relativePath":"about/versions.md","filePath":"about/versions.md","lastUpdated":null}'),l={name:"about/versions.md"},e=p(`<h1 id="Package-versions" tabindex="-1">Package versions <a class="header-anchor" href="#Package-versions" aria-label="Permalink to &quot;Package versions {#Package-versions}&quot;">​</a></h1><h2 id="Julia-version" tabindex="-1">Julia version <a class="header-anchor" href="#Julia-version" aria-label="Permalink to &quot;Julia version {#Julia-version}&quot;">​</a></h2><p>The examples were generated with the following Julia version:</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">using</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> InteractiveUtils</span></span>
+import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.Bgl4Vzh_.js";const h=JSON.parse('{"title":"Package versions","description":"","frontmatter":{},"headers":[],"relativePath":"about/versions.md","filePath":"about/versions.md","lastUpdated":null}'),l={name:"about/versions.md"},e=p(`<h1 id="Package-versions" tabindex="-1">Package versions <a class="header-anchor" href="#Package-versions" aria-label="Permalink to &quot;Package versions {#Package-versions}&quot;">​</a></h1><h2 id="Julia-version" tabindex="-1">Julia version <a class="header-anchor" href="#Julia-version" aria-label="Permalink to &quot;Julia version {#Julia-version}&quot;">​</a></h2><p>The examples were generated with the following Julia version:</p><div class="language-julia vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang">julia</span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">using</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;"> InteractiveUtils</span></span>
 <span class="line"><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">InteractiveUtils</span><span style="--shiki-light:#D73A49;--shiki-dark:#F97583;">.</span><span style="--shiki-light:#005CC5;--shiki-dark:#79B8FF;">versioninfo</span><span style="--shiki-light:#24292E;--shiki-dark:#E1E4E8;">()</span></span></code></pre></div><div class="language- vp-adaptive-theme"><button title="Copy Code" class="copy"></button><span class="lang"></span><pre class="shiki shiki-themes github-light github-dark vp-code" tabindex="0"><code><span class="line"><span>Julia Version 1.11.0-rc2</span></span>
 <span class="line"><span>Commit 34c3a63147b (2024-07-29 06:24 UTC)</span></span>
 <span class="line"><span>Build Info:</span></span>
@@ -31,7 +31,7 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h
 <span class="line"><span>  [fa961155] CEnum v0.5.0</span></span>
 <span class="line"><span>  [2a0fbf3d] CPUSummary v0.2.6</span></span>
 <span class="line"><span>  [159f3aea] Cairo v1.1.0</span></span>
-<span class="line"><span>  [13f3f980] CairoMakie v0.12.6</span></span>
+<span class="line"><span>  [13f3f980] CairoMakie v0.12.7</span></span>
 <span class="line"><span>  [d360d2e6] ChainRulesCore v1.24.0</span></span>
 <span class="line"><span>  [fb6a15b2] CloseOpenIntervals v0.1.13</span></span>
 <span class="line"><span>  [944b1d66] CodecZlib v0.7.6</span></span>
@@ -44,7 +44,7 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h
 <span class="line"><span>  [f70d9fcc] CommonWorldInvalidations v1.0.0</span></span>
 <span class="line"><span>  [34da2185] Compat v4.16.0</span></span>
 <span class="line"><span>  [2569d6c7] ConcreteStructs v0.2.3</span></span>
-<span class="line"><span>  [187b0558] ConstructionBase v1.5.6</span></span>
+<span class="line"><span>  [187b0558] ConstructionBase v1.5.7</span></span>
 <span class="line"><span>  [d38c429a] Contour v0.6.3</span></span>
 <span class="line"><span>  [adafc99b] CpuId v0.3.1</span></span>
 <span class="line"><span>  [9a962f9c] DataAPI v1.16.0</span></span>
@@ -69,7 +69,7 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h
 <span class="line"><span>  [5789e2e9] FileIO v1.16.3</span></span>
 <span class="line"><span>  [8fc22ac5] FilePaths v0.8.3</span></span>
 <span class="line"><span>  [48062228] FilePathsBase v0.9.21</span></span>
-<span class="line"><span>  [1a297f60] FillArrays v1.11.0</span></span>
+<span class="line"><span>  [1a297f60] FillArrays v1.12.0</span></span>
 <span class="line"><span>  [53c48c17] FixedPointNumbers v0.8.5</span></span>
 <span class="line"><span>  [1fa38f19] Format v1.3.7</span></span>
 <span class="line"><span>  [f6369f11] ForwardDiff v0.10.36</span></span>
@@ -119,13 +119,13 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h
 <span class="line"><span>  [2ab3a3ac] LogExpFunctions v0.3.28</span></span>
 <span class="line"><span>  [bdcacae8] LoopVectorization v0.12.171</span></span>
 <span class="line"><span>  [30fc2ffe] LossFunctions v0.11.1</span></span>
-<span class="line"><span>  [b2108857] Lux v0.5.64</span></span>
+<span class="line"><span>  [b2108857] Lux v0.5.65</span></span>
 <span class="line"><span>  [bb33d45b] LuxCore v0.1.24</span></span>
 <span class="line"><span>  [34f89e08] LuxDeviceUtils v0.1.27</span></span>
-<span class="line"><span>  [82251201] LuxLib v0.3.43</span></span>
-<span class="line"><span>  [7e8f7934] MLDataDevices v1.0.1</span></span>
+<span class="line"><span>  [82251201] LuxLib v0.3.45</span></span>
+<span class="line"><span>  [7e8f7934] MLDataDevices v1.0.2</span></span>
 <span class="line"><span>  [1914dd2f] MacroTools v0.5.13</span></span>
-<span class="line"><span>  [ee78f7c6] Makie v0.21.6</span></span>
+<span class="line"><span>  [ee78f7c6] Makie v0.21.7</span></span>
 <span class="line"><span>  [20f20a25] MakieCore v0.8.5</span></span>
 <span class="line"><span>  [d125e4d3] ManualMemory v0.1.8</span></span>
 <span class="line"><span>  [dbb5928d] MappedArrays v0.4.2</span></span>
@@ -213,7 +213,7 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.B4s6pP6g.js";const h
 <span class="line"><span>  [d80eeb9a] UnsafeAtomicsLLVM v0.2.0</span></span>
 <span class="line"><span>  [409d34a3] VectorInterface v0.4.6</span></span>
 <span class="line"><span>  [3d5dd08c] VectorizationBase v0.21.70</span></span>
-<span class="line"><span>  [d49dbf32] WeightInitializers v1.0.1</span></span>
+<span class="line"><span>  [d49dbf32] WeightInitializers v1.0.2</span></span>
 <span class="line"><span>  [efce3f68] WoodburyMatrices v1.0.0</span></span>
 <span class="line"><span>  [ddb6d928] YAML v0.4.12</span></span>
 <span class="line"><span>  [6e34b625] Bzip2_jll v1.0.8+1</span></span>
