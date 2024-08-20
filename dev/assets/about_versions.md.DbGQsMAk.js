@@ -122,7 +122,7 @@ import{_ as s,c as n,o as a,a7 as p}from"./chunks/framework.Bgl4Vzh_.js";const h
 <span class="line"><span>  [b2108857] Lux v0.5.65</span></span>
 <span class="line"><span>  [bb33d45b] LuxCore v0.1.24</span></span>
 <span class="line"><span>  [34f89e08] LuxDeviceUtils v0.1.27</span></span>
-<span class="line"><span>  [82251201] LuxLib v0.3.45</span></span>
+<span class="line"><span>  [82251201] LuxLib v0.3.46</span></span>
 <span class="line"><span>  [7e8f7934] MLDataDevices v1.0.2</span></span>
 <span class="line"><span>  [1914dd2f] MacroTools v0.5.13</span></span>
 <span class="line"><span>  [ee78f7c6] Makie v0.21.7</span></span>
