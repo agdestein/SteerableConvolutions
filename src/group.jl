@@ -186,7 +186,28 @@ Base.one(G::RotationGroup) = G(0)
 Base.:*(g::Element{RotationGroup}...) = g[1].group(sum(getfield.(g, :angle)))
 Base.inv(g::Element{RotationGroup}) = g.group(-g.angle)
 
-"Cyclic group ``C_N`` of order ``N``."
+"""
+Cyclic group ``C_N`` of order ``N``.
+
+# Example
+
+```jldoctest
+julia> G = CyclicGroup(8)
+CyclicGroup(8)
+
+julia> one(G)
+CyclicGroup(8)(0)
+
+julia> g, h = G(1), G(2)
+(CyclicGroup(8)(1), CyclicGroup(8)(2))
+
+julia> inv(g)
+CyclicGroup(8)(7)
+
+julia> g * h
+CyclicGroup(8)(3)
+```
+"""
 struct CyclicGroup <: AbstractFiniteGroup
     "Number of rotations in the group."
     N::Int
@@ -218,14 +239,35 @@ irreptype(group::CyclicGroup, i) =
     end
 frequencies(group::CyclicGroup) = 0:div(group.N, 2)
 
-"Dihedral group ``D_N``."
+"""
+Dihedral group ``D_N``.
+
+# Example
+
+```jldoctest
+julia> G = DihedralGroup(8)
+DihedralGroup(8)
+
+julia> one(G)
+DihedralGroup(8)(false, 0)
+
+julia> g, h = G(false, 5), G(true, 3)
+(DihedralGroup(8)(false, 5), DihedralGroup(8)(true, 3))
+
+julia> inv(g)
+DihedralGroup(8)(false, 3)
+
+julia> g * h
+DihedralGroup(8)(true, 0)
+```
+"""
 struct DihedralGroup <: AbstractFiniteGroup
     "Number of rotations in the group."
     N::Int
 end
 
 (group::DihedralGroup)(t::Tuple) = group(t...)
-(group::DihedralGroup)(flip, n) = Element(group, (flip, mod(n, group.N)))
+(group::DihedralGroup)(flip::Bool, n::Int) = Element(group, (flip, mod(n, group.N)))
 order(group::DihedralGroup) = 2 * group.N
 Base.one(group::DihedralGroup) = Element(group, (false, 0))
 Base.:*(g::Element{DihedralGroup}, h::Element{DihedralGroup}) =
