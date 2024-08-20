@@ -55,12 +55,12 @@ The representation must be such that
 abstract type AbstractRepresentation end
 
 "Irreducible group representation (\"irrep\")."
-struct IrreducibleRepresentation{G,A} <: AbstractRepresentation
+struct IrreducibleRepresentation{G,F,A} <: AbstractRepresentation
     "Group."
     group::G
 
-    "Irrep ID."
-    id::Int
+    "Irrep frequency."
+    frequency::F
 
     "Irrep matrix constructor. Can be called as `mat(g)`."
     mat::A
@@ -70,9 +70,9 @@ struct IrreducibleRepresentation{G,A} <: AbstractRepresentation
 end
 
 "General group representation. It is stored as a direct sum of irreps with a basis change."
-struct Representation{A} <: AbstractRepresentation
+struct Representation{F,A} <: AbstractRepresentation
     "List of irrep frequencies by order of appearance in direct sum."
-    frequencies::Vector{Int}
+    frequencies::F
 
     "Change of basis matrix."
     basis::A
@@ -90,7 +90,7 @@ function frequencies end
 "Get change of basis matrix for block-diagonal representation decomposition."
 function basis end
 
-frequencies(r::IrreducibleRepresentation) = [r.id]
+frequencies(r::IrreducibleRepresentation) = [r.frequency]
 basis(r::IrreducibleRepresentation) = one(r.mat(one(r.group)))
 
 frequencies(r::Representation) = r.frequencies
@@ -129,7 +129,7 @@ sum_of_squares_constituents(type) =
 "Get the regular representation of a group."
 function regular_representation(group)
     N = order(group)
-    e = elements(group)
+    e = elements(group) |> vec
     representations = map(e) do g
         r = zeros(N, N)
         for (j, h) in enumerate(e)
@@ -224,6 +224,7 @@ struct DihedralGroup <: AbstractFiniteGroup
     N::Int
 end
 
+(group::DihedralGroup)(t::Tuple) = group(t...)
 (group::DihedralGroup)(flip, n) = Element(group, (flip, mod(n, group.N)))
 order(group::DihedralGroup) = 2 * group.N
 Base.one(group::DihedralGroup) = Element(group, (false, 0))
@@ -232,21 +233,18 @@ Base.:*(g::Element{DihedralGroup}, h::Element{DihedralGroup}) =
 Base.inv(g::Element{DihedralGroup}) = g.group(g.n[1], -(g.n[1] ? -1 : 1) * g.n[2])
 elements(group::DihedralGroup) = group.(Iterators.product((false, true), 0:group.N-1))
 irrepmat(g::Element{DihedralGroup}, (flip, i)) =
-    if flip
-        if i == 0
-            (g.n[1] ? -1 : 1) * fill(1.0, 1, 1)
-        elseif iseven(g.group.N) && 2i == g.group.N
-            (g.n[1] ? -1 : 1) * fill(cospi(g.n[2]), 1, 1)
-        else
-            fliprotmat(g.n[1], 2π * i * g.n[2] / g.group.N)
-        end
+    if i == 0
+        (flip && g.n[1] ? -1 : 1) * fill(1.0, 1, 1)
+    elseif iseven(g.group.N) && 2i == g.group.N
+        (flip && g.n[1] ? -1 : 1) * fill(cospi(g.n[2]), 1, 1)
+    elseif flip && i > 0 && 2i < g.group.N
+        fliprotmat(g.n[1], 2π * i * g.n[2] / g.group.N)
     else
-        if i == 0
-            # Trivial representation
-            fill(1.0, 1, 1)
-        elseif iseven(g.group.N) && 2i == g.group.N
-            fill(cospi(g.n[2]), 1, 1)
-        else
-            error("This combination is not an irrep")
-        end
+        error("This combination is not an irrep")
     end
+irreptype(::DihedralGroup, _) = 'R'
+frequencies(group::DihedralGroup) = vcat(
+    (false, 0),
+    map(i -> (true, i), 0:div(group.N, 2)),
+    fill((false, div(group.N, 2)), iseven(group.N)),
+)

@@ -5,5 +5,5 @@ function flipmat(flip)
 end
 function fliprotmat(flip, angle)
     s = flip ? -1 : 1
-    [cos(angle) -s * sin(angle); s * sin(angle) cos(angle)]
+    [cos(angle) -s * sin(angle); sin(angle) s * cos(angle)]
 end
