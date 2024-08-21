@@ -215,7 +215,7 @@ end
 
 (group::CyclicGroup)(n) = Element(group, mod(n, group.N))
 order(group::CyclicGroup) = group.N
-Base.one(group::CyclicGroup) = Element(group, 0)
+Base.one(group::CyclicGroup) = group(0)
 Base.:*(g::Element{CyclicGroup}, h::Element{CyclicGroup}) = g.group(g.n + h.n)
 Base.inv(g::Element{CyclicGroup}) = g.group(-g.n)
 elements(group::CyclicGroup) = group.(0:group.N-1)
@@ -269,7 +269,7 @@ end
 (group::DihedralGroup)(t::Tuple) = group(t...)
 (group::DihedralGroup)(flip::Bool, n::Int) = Element(group, (flip, mod(n, group.N)))
 order(group::DihedralGroup) = 2 * group.N
-Base.one(group::DihedralGroup) = Element(group, (false, 0))
+Base.one(group::DihedralGroup) = group(false, 0)
 Base.:*(g::Element{DihedralGroup}, h::Element{DihedralGroup}) =
     g.group(g.n[1] ⊻ h.n[1], g.n[2] + (g.n[1] ? -1 : 1) * h.n[2])
 Base.inv(g::Element{DihedralGroup}) = g.group(g.n[1], -(g.n[1] ? -1 : 1) * g.n[2])
