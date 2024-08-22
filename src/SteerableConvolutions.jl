@@ -16,30 +16,30 @@ using TensorOperations
 
 # Docstring templates
 @template MODULES = """
-                   $(DOCSTRING)
+    $(DOCSTRING)
 
-                   # Exports
+    # Exports
 
-                   $(EXPORTS)
-                   """
+    $(EXPORTS)
+    """
 @template (FUNCTIONS, METHODS, MACROS) = """
-                                 $TYPEDSIGNATURES
+    $TYPEDSIGNATURES
 
-                                 $DOCSTRING
+    $DOCSTRING
 
-                                 # Methods
+    # Methods
 
-                                 $METHODLIST
-                                 """
+    $METHODLIST
+    """
 @template TYPES = """
-                  $TYPEDEF
+    $TYPEDEF
 
-                  $DOCSTRING
+    $DOCSTRING
 
-                  # Fields
+    # Fields
 
-                  $FIELDS
-                  """
+    $FIELDS
+    """
 
 "$LICENSE"
 license = "MIT"
