@@ -13,6 +13,7 @@ using DocStringExtensions
 using EnumX
 using LinearAlgebra
 using Lux
+using Random
 using TensorOperations
 
 # Docstring templates
@@ -48,6 +49,7 @@ license = "MIT"
 include("utils.jl")
 include("group.jl")
 include("field.jl")
+include("conv.jl")
 
 export AbstractGroup,
     AbstractFiniteGroup,
