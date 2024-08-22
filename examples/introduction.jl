@@ -88,11 +88,12 @@ round.(Int, ρ(one(G)))
 
 # ### Irreducible representations
 #
-# The regular representation is composed of [`IrreducibleRepresentation`](@ref)s (irreps).
+# The regular representation is composed of irreducible represenations
+# ([`Irrep`](@ref)s).
 # For the circular group, there are ``N / 2`` irreps of different frequencies.
 # With frequency ``0``, we get the trivial (constant) representation ``\psi_0``,
 # which is a ``1 \times 1`` identity matrix for all group elements:
-ψ₀ = irrep(G, 0)
+ψ₀ = Irrep(G, 0)
 ψ₀(G(0)), ψ₀(G(1)), ψ₀(G(2))
 
 # The next irrep ``\psi_1`` has frequency ``1`` and takes the value of a
@@ -105,7 +106,7 @@ round.(Int, ρ(one(G)))
 #     \sin(\theta) & \cos(\theta)
 # \end{bmatrix}.
 # ```
-ψ₁ = irrep(G, 1)
+ψ₁ = Irrep(G, 1)
 ψ₁(g)
 
 # All the valid irrep frequencies are accessible through the `frequencies` function:
@@ -142,7 +143,7 @@ B = basis(ρ)
 I = frequencies(ρ)
 
 # We can assemble the direct sum:
-ρ_block = ⊕(map(i -> irrep(G, i), I)...)
+ρ_block = ⊕(map(i -> Irrep(G, i), I)...)
 ρ_block(g)
 
 # We can verify that the direct sum is equal to the regular representation

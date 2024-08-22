@@ -24,14 +24,14 @@ end
     @test frequencies(CyclicGroup(8)) == 0:4
     @test frequencies(CyclicGroup(9)) == 0:4
     G = CyclicGroup(8)
-    @test all(==([1;;]), irrep(G, 0).(elements(G)))
+    @test all(==([1;;]), Irrep(G, 0).(elements(G)))
 end
 
 @testitem "Direct sum" begin
     G = CyclicGroup(8)
     ρ1 = Representation([0, 0, 1, 4], randn(5, 5))
     ρ2 = Representation([4], randn(1, 1))
-    ρ3 = irrep(G, 1)
+    ρ3 = Irrep(G, 1)
     ρ = ρ1 ⊕ ρ2 ⊕ ρ3
     @test frequencies(ρ) == vcat(frequencies(ρ1), frequencies(ρ2), frequencies(ρ3))
 end

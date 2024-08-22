@@ -7,15 +7,15 @@ struct GSpace{G}
     dim::Int
 end
 
-basespace_action(gspace::GSpace) = irrep(gspace.group, 1)
+basespace_action((; group)::GSpace) = Irrep(group, 1)
 
 "Field type."
 struct FieldType{G,R}
     "GSpace."
     gspace::G
 
-    "List of representations."
-    representations::R
+    "Representation."
+    representation::R
 end
 
 "Fiber field."
@@ -34,13 +34,12 @@ end
 
 function Base.:*(g::Element, f::FiberField)
     (; fieldtype, x) = f
-    (; gspace, representations) = fieldtype
+    (; gspace, representation) = fieldtype
     (; group, dim) = gspace
     n = size(x, 1)
     A = basespace_action(gspace)(inv(g))
     @assert dim == 2 "Only 2D for now."
-    ρ = directsum(representations...)
-    R = ρ(g)
+    R = representation(g)
 
     # Transform fibers
     @tensor y[i, j, a] := R[a, b] * x[i, j, b]

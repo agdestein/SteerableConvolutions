@@ -55,18 +55,12 @@ The representation must be such that
 abstract type AbstractRepresentation end
 
 "Irreducible group representation (\"irrep\")."
-struct IrreducibleRepresentation{G,F,A} <: AbstractRepresentation
+struct Irrep{G,F} <: AbstractRepresentation
     "Group."
     group::G
 
     "Irrep frequency."
-    frequency::F
-
-    "Irrep matrix constructor. Can be called as `mat(g)`."
-    mat::A
-
-    "Irrep type, can be `'R'`, `'C'`, or `'Q'`."
-    type::Char
+    freq::F
 end
 
 "General group representation. It is stored as a direct sum of irreps with a basis change."
@@ -78,14 +72,13 @@ struct Representation{F,A} <: AbstractRepresentation
     basis::A
 end
 
-(ψ::IrreducibleRepresentation)(g) = ψ.mat(g)
 function ((; frequencies, basis)::Representation)(g)
-    i = directsum(map(i -> irrepmat(g, i), frequencies)...)
-    basis * i * inv(basis)
+    S = directsum(map(i -> Irrep(g.group, i)(g), frequencies)...)
+    basis * S * inv(basis)
 end
 
 """
-    istrivial(::IrreducibleRepresentation)
+    istrivial(::Irrep)
 
 Return `true` if the irrep is trivial.
 """
@@ -97,11 +90,11 @@ function frequencies end
 "Get change of basis matrix for block-diagonal representation decomposition."
 function basis end
 
-frequencies(r::IrreducibleRepresentation) = [r.frequency]
-basis(r::IrreducibleRepresentation) = one(r.mat(one(r.group)))
+frequencies(ψ::Irrep) = [ψ.freq]
+basis(ψ::Irrep) = ψ(one(ψ.group))
 
-frequencies(r::Representation) = r.frequencies
-basis(r::Representation) = r.basis
+frequencies(ρ::Representation) = ρ.frequencies
+basis(ρ::Representation) = ρ.basis
 
 "Direct sum of matrices or representations."
 function directsum end
@@ -130,7 +123,7 @@ sum_of_squares_constituents(type) =
     elseif type == 'Q'
         4
     else
-        error("irrep: unknown type $(i.type)")
+        error("irrep: unknown type $(type)")
     end
 
 "Get the regular representation of a group."
@@ -149,10 +142,10 @@ function regular_representation(group)
 
     i = frequencies(group)
     multiplicities = map(i) do i
-        (; type) = irrep(group, i)
-
+        ψ = Irrep(group, i)
+        type = irreptype(ψ)
         m = map(characters, e) do c, g
-            c * tr(irrepmat(inv(g), i))
+            c * tr(ψ(inv(g)))
         end
         m = sum(m) / length(characters) / sum_of_squares_constituents(type)
         mint = round(Int, m)
@@ -160,13 +153,13 @@ function regular_representation(group)
         mint
     end
     ilist = vcat(fill.(i, multiplicities)...)
-    irrs = map(i -> irrep(group, i), ilist)
+    irrs = map(i -> Irrep(group, i), ilist)
     P = directsum(irrs...)
 
     v = zeros(N)
     p = 0
     for (irr, m) in zip(i, multiplicities)
-        s = size(irrepmat(one(group), irr), 1)
+        s = size(Irrep(group, irr)(one(group)), 1)
         @assert s ≥ m
         M = Matrix(I * sqrt(s), s, m)
         v[p+1:p+m*s] .= M[:]
@@ -181,9 +174,6 @@ function regular_representation(group)
 
     Representation(ilist, basis)
 end
-
-irrep(group, i) =
-    IrreducibleRepresentation(group, i, g -> irrepmat(g, i), irreptype(group, i))
 
 "Rotation group in the plane."
 struct RotationGroup <: AbstractGroup end
@@ -226,26 +216,29 @@ Base.one(group::CyclicGroup) = group(0)
 Base.:*(g::Element{CyclicGroup}, h::Element{CyclicGroup}) = g.group(g.n + h.n)
 Base.inv(g::Element{CyclicGroup}) = g.group(-g.n)
 elements(group::CyclicGroup) = group.(0:group.N-1)
-irrepmat(g::Element{CyclicGroup}, i) =
-    if 2i > g.group.N
-        error("irrepmat: 2i must be less N")
-    elseif i == 0
+function (ψ::Irrep{CyclicGroup})(g)
+    (; group, freq) = ψ
+    @assert group == g.group
+    if 2 * freq > group.N
+        error("Irrep{CyclicGroup}: 2 * freq must be less N")
+    elseif freq == 0
         fill(1.0, 1, 1)
-    elseif iseven(g.group.N) && 2i == g.group.N
+    elseif iseven(group.N) && 2 * freq == group.N
         fill(cospi(g.n), 1, 1)
     else
-        rotmat(2π * i * g.n / g.group.N)
+        rotmat(2π * freq * g.n / group.N)
     end
-irreptype(group::CyclicGroup, i) =
-    if i == 0
+end
+irreptype(ψ::Irrep{CyclicGroup}) =
+    if ψ.freq == 0
         'R'
-    elseif iseven(group.N) && 2i == group.N
+    elseif iseven(ψ.group.N) && 2 * ψ.freq == ψ.group.N
         'R'
     else
         'C'
     end
 frequencies(group::CyclicGroup) = 0:div(group.N, 2)
-istrivial(i::IrreducibleRepresentation{CyclicGroup}) = i.frequency == 0
+istrivial(ψ::Irrep{CyclicGroup}) = ψ.freq == 0
 
 """
 Dihedral group ``D_N``.
@@ -282,20 +275,25 @@ Base.:*(g::Element{DihedralGroup}, h::Element{DihedralGroup}) =
     g.group(g.n[1] ⊻ h.n[1], g.n[2] + (g.n[1] ? -1 : 1) * h.n[2])
 Base.inv(g::Element{DihedralGroup}) = g.group(g.n[1], -(g.n[1] ? -1 : 1) * g.n[2])
 elements(group::DihedralGroup) = group.(Iterators.product((false, true), 0:group.N-1))
-irrepmat(g::Element{DihedralGroup}, (flip, i)) =
+function (ψ::Irrep{DihedralGroup})(g)
+    (; group, freq) = ψ
+    (; N) = group
+    flip, i = freq
+    @assert g.group == group
     if i == 0
         (flip && g.n[1] ? -1 : 1) * fill(1.0, 1, 1)
-    elseif iseven(g.group.N) && 2i == g.group.N
+    elseif iseven(N) && 2i == N
         (flip && g.n[1] ? -1 : 1) * fill(cospi(g.n[2]), 1, 1)
-    elseif flip && i > 0 && 2i < g.group.N
-        fliprotmat(g.n[1], 2π * i * g.n[2] / g.group.N)
+    elseif flip && i > 0 && 2i < N
+        fliprotmat(g.n[1], 2π * i * g.n[2] / N)
     else
         error("This combination is not an irrep")
     end
-irreptype(::DihedralGroup, _) = 'R'
+end
+irreptype(::Irrep{DihedralGroup}) = 'R'
 frequencies(group::DihedralGroup) = vcat(
     (false, 0),
     map(i -> (true, i), 0:div(group.N, 2)),
     fill((false, div(group.N, 2)), iseven(group.N)),
 )
-istrivial(i::IrreducibleRepresentation{DihedralGroup}) = i.frequency == (false, 0)
+istrivial(ψ::Irrep{DihedralGroup}) = ψ.freq == (false, 0)

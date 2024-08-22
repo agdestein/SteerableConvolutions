@@ -20,14 +20,13 @@ gspace = GSpace(G, 2)
 
 # ## Field types
 #
-# Create a [`FieldType`](@ref) from a list of representations.
-representations = [irrep(G, 0), irrep(G, 1)]
-fieldtype = FieldType(gspace, representations)
+# Create a [`FieldType`](@ref) from a G-space and representation.
+fieldtype = FieldType(gspace, Irrep(G, 0) ⊕ Irrep(G, 1))
 
 # ## Fiber fields
 #
-# Since our fieldtype contains one scalar field (from `irrep(G, 0)`) and
-# one 2D-vector field (from `irrep(G, 1)`), we need to create a feature
+# Since our fieldtype contains one scalar field (from `Irrep(G, 0)`) and
+# one 2D-vector field (from `Irrep(G, 1)`), we need to create a feature
 # field with three channels.
 # We wrap it in a [`FiberField`](@ref) from a field type and data.
 n = 50
@@ -84,7 +83,7 @@ plot(newfield)
 #
 # For example, consider ``\rho_\text{in}`` to be the representation from above,
 # and ``\rho_\text{out}`` to be the trivial representation:
-fieldtype_out = FieldType(gspace, [irrep(gspace.group, 0)])
+fieldtype_out = FieldType(gspace, Irrep(gspace.group, 0))
 
 # The following function is not equivariant:
 function notequivariant(u)
