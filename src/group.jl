@@ -84,6 +84,13 @@ function ((; frequencies, basis)::Representation)(g)
     basis * i * inv(basis)
 end
 
+"""
+    istrivial(::IrreducibleRepresentation)
+
+Return `true` if the irrep is trivial.
+"""
+function istrivial end
+
 "Get irrep frequencies used to block-diagonalize a representation."
 function frequencies end
 
@@ -238,6 +245,7 @@ irreptype(group::CyclicGroup, i) =
         'C'
     end
 frequencies(group::CyclicGroup) = 0:div(group.N, 2)
+istrivial(i::IrreducibleRepresentation{CyclicGroup}) = i.frequency == 0
 
 """
 Dihedral group ``D_N``.
@@ -290,3 +298,4 @@ frequencies(group::DihedralGroup) = vcat(
     map(i -> (true, i), 0:div(group.N, 2)),
     fill((false, div(group.N, 2)), iseven(group.N)),
 )
+istrivial(i::IrreducibleRepresentation{DihedralGroup}) = i.frequency == (false, 0)
