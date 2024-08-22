@@ -63,6 +63,8 @@ struct Irrep{G,F} <: AbstractRepresentation
     freq::F
 end
 
+Base.size(ψ::Irrep, dims...) = size(ψ(one(ψ.group)), dims...)
+
 "General group representation. It is stored as a direct sum of irreps with a basis change."
 struct Representation{F,A} <: AbstractRepresentation
     "List of irrep frequencies by order of appearance in direct sum."
@@ -76,6 +78,8 @@ function ((; frequencies, basis)::Representation)(g)
     S = directsum(map(i -> Irrep(g.group, i)(g), frequencies)...)
     basis * S * inv(basis)
 end
+
+Base.size(ρ::Representation, dims...) = size(ρ.basis, dims...)
 
 """
     istrivial(::Irrep)
