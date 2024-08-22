@@ -10,6 +10,7 @@ $(EXPORTS)
 module SteerableConvolutions
 
 using DocStringExtensions
+using EnumX
 using LinearAlgebra
 using Lux
 using TensorOperations
@@ -59,6 +60,7 @@ export AbstractGroup,
     FiberField,
     GSpace,
     Irrep,
+    IrrepType,
     Representation,
     basis,
     elements,

@@ -115,12 +115,15 @@ directsum(r::AbstractRepresentation...) =
 "Alias for [`directsum`](@ref)."
 const ⊕ = directsum
 
+"Irrep type."
+@enumx IrrepType real complex quaternionic
+
 sum_of_squares_constituents(type) =
-    if type == 'R'
+    if type == IrrepType.real
         1
-    elseif type == 'C'
+    elseif type == IrrepType.complex
         2
-    elseif type == 'Q'
+    elseif type == IrrepType.quaternionic
         4
     else
         error("irrep: unknown type $(type)")
@@ -231,11 +234,11 @@ function (ψ::Irrep{CyclicGroup})(g)
 end
 irreptype(ψ::Irrep{CyclicGroup}) =
     if ψ.freq == 0
-        'R'
+        IrrepType.real
     elseif iseven(ψ.group.N) && 2 * ψ.freq == ψ.group.N
-        'R'
+        IrrepType.real
     else
-        'C'
+        IrrepType.complex
     end
 frequencies(group::CyclicGroup) = 0:div(group.N, 2)
 istrivial(ψ::Irrep{CyclicGroup}) = ψ.freq == 0
@@ -290,7 +293,7 @@ function (ψ::Irrep{DihedralGroup})(g)
         error("This combination is not an irrep")
     end
 end
-irreptype(::Irrep{DihedralGroup}) = 'R'
+irreptype(::Irrep{DihedralGroup}) = IrrepType.real
 frequencies(group::DihedralGroup) = vcat(
     (false, 0),
     map(i -> (true, i), 0:div(group.N, 2)),
