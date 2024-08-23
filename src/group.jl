@@ -20,9 +20,6 @@ end
 "Get elements of a finite group."
 function elements end
 
-"Get irrep of frequency `i`."
-function irrep end
-
 # (group::AbstractGroup)(n) = Element(group, n)
 function Base.show(io::IO, e::Element)
     print(io, e.group)

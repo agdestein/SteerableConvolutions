@@ -9,6 +9,30 @@ end
 
 basespace_action((; group)::GSpace) = Irrep(group, 1)
 
+function build_kernel_basis(
+    gspace::GSpace{CyclicGroup},
+    ρin,
+    ρout,
+    σ,
+    rings,
+    maximum_frequency,
+)
+    (; group) = gspace
+    (; n) = group
+    sg_id = (nothing, n)
+    radial_profile = GaussianRadialProfile(radii, sigma)
+    basis = SteerableKernelBasis(
+        CircularShellsBasis(maximum_frequency, radial_profile),
+        in_repr,
+        out_repr,
+        RestrictedWignerEckartBasis,
+        sg_id,
+    )
+end
+
+GaussianRadialProfile(radii, σ) = r -> map((r0, σ) -> exp(-(r - r0)^2 / 2σ^2), radii, σ)
+function CircularShellsBasis(maximum_frequency, radial_profile) end
+
 "Field type."
 struct FieldType{G,R}
     "GSpace."
