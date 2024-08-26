@@ -9,17 +9,9 @@ end
 
 basespace_action((; group)::GSpace) = Irrep(group, 1)
 
-function build_kernel_basis(;
-    gspace,
-    kernel_size,
-    ρ_in,
-    ρ_out,
-    σ,
-    rings,
-    maximum_frequency,
-    dilation,
-)
+function build_angular_basis(; gspace, angles, ρ_in, ρ_out, σ, maximum_frequency)
     (; group) = gspace
+    ϕ = angles
 
     # Representation stuff
     Q_in, Q_out = (ρ_in, ρ_out) |> basis
@@ -30,49 +22,28 @@ function build_kernel_basis(;
     stop_in, stop_out = (s_in, s_out) |> cumsum
     ind_in, ind_out = (f_in, f_out) |> eachindex
 
-    # Build coordinates
-    grid = get_grid_coords(2, kernel_size, 1)
-    x, y = grid[1, :], grid[2, :]
-    r = @. sqrt(x^2 + y^2)
-    ϕ = @. atan(y, x)
-
-    # Build radial basis
-    radial_basis = map(rings, σ) do ring, σ
-        GaussianRadialProfile(ring, σ).(r)
-    end
-    radial_basis = reshape(radial_basis, kernel_size^2, 1, 1, 1, :)
-
     # Build full basis - with super agressive broadcasting
     b = map(Iterators.product(ind_in, ind_out)) do i, j
-        m, n = fout[i], fin[j]
-        A = Q_out[:, stop_out[i]-s_out[i]+1:stop_out[i]]
-        B = Q_in_inv[stop_in[j]-s_in[j]+1:stop_in[j], :]
+        m, n = fout[j], fin[i]
+        A = Q_in_inv[stop_in[i]-s_in[i]+1:stop_in[i], :]
+        B = Q_out[:, stop_out[j]-s_out[j]+1:stop_out[j]]
         ψm = Irrep(group, m)
         ψn = Irrep(group, n)
 
-        # Resulting size: (kernel_size^2, α, β, dϕ),
+        # Resulting size: (npoint, β, α, dϕ),
         # where (α, β) is the size of the subkernel
         # and dϕ is the number of angular basis functions
         # for the irrep combination (ψm, ψn)
         block = get_basis_block(ψm, ψn, ϕ; maximum_frequency)
 
-        # Resulting size: (kernel_size^2, α, β, dϕ, dr),
-        # where dr is the number of radial basis functions (rings)
-        κ = block .* radial_basis
-
-        # Resulting size: (kernel_size^2, α, β, d),
-        # where d is now the total number of basis kernels
-        # for the irrep combination (ψm, ψn)
-        κ = reshape(κ, kernel_size, kernel_size, s_out[i], s_in[j], :)
-
         # Expand subkernel κ to full basis kernel k
-        # Resulting size: (kernel_size^2, a, b, d)
-        # where a is the size of ρ_out and b is the size of ρ_in
-        @tensor k[x, a, b, d] := A[a, α] * κ[x, α, β, d] * B[β, b]
+        # Resulting size: (npoint, a, b, d)
+        # where a is the size of ρ_in and b is the size of ρ_out
+        @tensor k[x, a, b, d] := B[b, β] * κ[x, β, α, d] * A[α, a]
         k
     end
 
-    stack(b; dims = 5)
+    stack(b; dims = 4)
 end
 
 GaussianRadialProfile(r0, σ) = r -> exp(-(r - r0)^2 / 2σ^2)
