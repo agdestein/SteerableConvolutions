@@ -62,7 +62,10 @@ end
 
 Base.size(ψ::Irrep, dims...) = size(ψ(one(ψ.group)), dims...)
 
-"General group representation. It is stored as a direct sum of irreps with a basis change."
+"""
+General group representation. It is stored as a direct sum of irreps with a
+change of basis matrix.
+"""
 struct Representation{F,A} <: AbstractRepresentation
     "List of irrep frequencies by order of appearance in direct sum."
     frequencies::F
