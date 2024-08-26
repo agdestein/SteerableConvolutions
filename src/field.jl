@@ -73,20 +73,38 @@ function Base.:*(g::Element, f::FiberField)
         all(≈(1), sum(abs, A; dims = 2)) &&
         A ≈ round.(Int, A)
 
-    @assert ispermutation "Only pure permutation works for now."
-    A = round.(Int, A)
+    if ispermutation
+        A = round.(Int, A)
 
-    # Transform base space
-    Rx = findfirst(a -> abs(a) == 1, A[1, :])
-    Ry = findfirst(a -> abs(a) == 1, A[2, :])
-    sx = sign(A[1, Rx])
-    sy = sign(A[2, Ry])
-    i = sx == 1 ? (1:n) : (n:-1:1)
-    i = Rx == 1 ? i : i'
-    j = sy == 1 ? (1:n) : (n:-1:1)
-    j = Ry == 1 ? j : j'
-    I = CartesianIndex.(i, j)
-    y = y[I, :]
+        # Transform base space
+        Rx = findfirst(a -> abs(a) == 1, A[1, :])
+        Ry = findfirst(a -> abs(a) == 1, A[2, :])
+        sx = sign(A[1, Rx])
+        sy = sign(A[2, Ry])
+        i = sx == 1 ? (1:n) : (n:-1:1)
+        i = Rx == 1 ? i : i'
+        j = sy == 1 ? (1:n) : (n:-1:1)
+        j = Ry == 1 ? j : j'
+        I = CartesianIndex.(i, j)
+        y = y[I, :]
+    else
+        # Get coordinates of the new grid (Cartesian)
+        # Transform coordinates with inverse element
+        # Interpolate old field to these coordinates
+        grid = get_grid_coords(dim, n, 1)
+        Agrid = A * grid
+        bounds = extrema(grid)
+        scalargrid = range(bounds..., n)
+        i = @. (bounds[1] < Agrid[1, :] < bounds[2]) && (bounds[1] < Agrid[2, :] < bounds[2])
+        y = zero(x)
+        y = stack(1:size(x, 3)) do a
+            field = x[:, :, a]
+            p = linear_interpolation((scalargrid, scalargrid), field)
+            ya = zeros(n^2)
+            @. ya[i] = p(Agrid[1, i], Agrid[2, i])
+            reshape(ya, n, n)
+        end
+    end
 
     FiberField(fieldtype, y)
 end

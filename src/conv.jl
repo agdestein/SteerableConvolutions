@@ -84,10 +84,9 @@ function build_weightbasis(c::R2Conv)
 end
 
 get_grid_coords(d, kernel_size, dilation) =
-    broadcast(1:kernel_size^d, (1:d)') do i, j
-        p = div(i - 1, kernel_size^(j - 1)) % kernel_size
+    broadcast(1:d, (1:kernel_size^d)') do i, j
+        p = div(j - 1, kernel_size^(i - 1)) % kernel_size
         p = dilation * (p - (kernel_size - 1) / 2)
-        j > 1 ? -p : p
     end
 
 function compute_basis_params(;

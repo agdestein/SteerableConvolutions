@@ -11,6 +11,7 @@ module SteerableConvolutions
 
 using DocStringExtensions
 using EnumX
+using Interpolations
 using LinearAlgebra
 using Lux
 using Random
