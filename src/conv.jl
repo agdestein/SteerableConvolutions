@@ -28,10 +28,8 @@ function R2Conv(
     R2Conv(gspace, ρ_in, ρ_out, c_in, c_out, init_weight, init_bias, conv)
 end
 
-function (c::R2Conv)(f, params, states)
-    (; gspace, representation, x) = f
-    (; ρ_in, ρ_out, conv) = c
-    @assert representation == ρ_in
+function (c::R2Conv)(x, params, states)
+    (; conv) = c
     @tensor weight[kx, ky, nin, cin, nout, cout] :=
         states.weightbasis[kx, ky, nin, nout, d] *
         params.weight[d, cin, cout]
@@ -47,8 +45,7 @@ function (c::R2Conv)(f, params, states)
     x = reshape(x, size(x, 1), size(x, 2), n_in * c_in, :)
     x, convstates = conv(x, params, states.convstates)
     x = reshape(x, size(x, 1), size(x, 2), n_out, c_out, :)
-    f = FiberField(gspace, ρ_out, x)
-    f, (; states..., convstates)
+    x, (; states..., convstates)
 end
 
 uses_bias(c::R2Conv) = uses_bias(c.conv)
