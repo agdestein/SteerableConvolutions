@@ -6,7 +6,7 @@ end                                            #src
 
 # # Equivariance
 #
-# Introduction to [`GSpace`](@ref)s, [`FieldType`](@ref)s, and [`FiberField`](@ref)s
+# Introduction to [`GSpace`](@ref)s and [`FiberField`](@ref)s
 # using the SteerableConvolutions.jl package.
 
 using SteerableConvolutions
@@ -18,13 +18,11 @@ using CairoMakie
 G = CyclicGroup(4)
 gspace = GSpace(G, 2)
 
-# ## Field types
-#
-# Create a [`FieldType`](@ref) from a G-space and representation.
-fieldtype = FieldType(gspace, Irrep(G, 0) ⊕ Irrep(G, 1))
-
 # ## Fiber fields
 #
+# We first create a representation.
+ρ = Irrep(G, 0) ⊕ Irrep(G, 1)
+
 # Since our fieldtype contains one scalar field (from `Irrep(G, 0)`) and
 # one 2D-vector field (from `Irrep(G, 1)`), we need to create a feature
 # field with three channels.
@@ -36,7 +34,7 @@ x = zeros(n + 1, n + 1, 3)
 @. x[:, :, 1] = sinpi(10 * grid) * mask
 @. x[:, :, 2] = sinpi(2 * grid) * cospi(3 * grid') * mask
 @. x[:, :, 3] = -cospi(2 * grid) * sinpi(3 * grid') * mask
-field = FiberField(fieldtype, x)
+field = FiberField(gspace, ρ, x)
 
 # We now apply a group transform (rotation by 90 degrees):
 g = G(1)
@@ -83,13 +81,13 @@ plot(newfield)
 #
 # For example, consider ``\rho_\text{in}`` to be the representation from above,
 # and ``\rho_\text{out}`` to be the trivial representation:
-fieldtype_out = FieldType(gspace, Irrep(gspace.group, 0))
+ρ_out = Irrep(gspace.group, 0)
 
 # The following function is not equivariant:
 function notequivariant(u)
     (; x) = u
     y = x[:, :, 2:2] + x[:, :, 3:3]
-    FiberField(fieldtype_out, y)
+    FiberField(gspace, ρ_out, y)
 end
 
 # since
@@ -101,7 +99,7 @@ a.x ≈ b.x
 function norm2(u)
     (; x) = u
     y = @. x[:, :, 2:2]^2 + x[:, :, 3:3]^2
-    FiberField(fieldtype_out, y)
+    FiberField(gspace, ρ_out, y)
 end
 
 # since

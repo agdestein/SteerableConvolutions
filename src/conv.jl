@@ -1,64 +1,69 @@
 "Steerable convolutional layer on ``\\mathbb{R}^2``."
-struct R2Conv{FI,FO,IW,IB,C} <: Lux.AbstractExplicitLayer
-    field_in::FI
-    field_out::FO
-    nin::Int
-    nout::Int
-    cin::Int
-    cout::Int
+struct R2Conv{G,RI,RO,IW,IB,C} <: Lux.AbstractExplicitLayer
+    gspace::G
+    ρ_in::RI
+    ρ_out::RO
+    c_in::Int
+    c_out::Int
     init_weight::IW
     init_bias::IB
     conv::C
 end
 
 function R2Conv(
-    width,
-    fieldtypes,
+    gspace,
+    representations,
     channels;
+    kernel_size,
     activation = identity,
     use_bias = true,
     init_weight = glorot_uniform,
     init_bias = zeros32,
     kwargs...,
 )
-    field_in, field_out = fieldtypes
-    cin, cout = channels
-    @assert field_in.gspace == field_out.gspace
-    nin = size(field_in.representation, 1)
-    nout = size(field_out.representation, 1)
-    conv = Conv((width, width), cin * nin => cout * nout, activation; use_bias, kwargs...)
-    R2Conv(field_in, field_out, nin, nout, cin, cout, init_weight, init_bias, conv)
+    ρ_in, ρ_out = representations
+    c_in, c_out = channels
+    n_in, n_out = size(ρ_in, 1), size(ρ_out, 1)
+    conv = Conv((kernel_size, kernel_size), c_in * n_in => c_out * n_out, activation; use_bias, kwargs...)
+    R2Conv(gspace, ρ_in, ρ_out, c_in, c_out, init_weight, init_bias, conv)
 end
 
-function (c::R2Conv)(x, params, state)
-    (; nin, nout, cin, cout, conv) = c
-    @tensor weight[x, y, nin, cin, nout, cout] =
-        state.weightbasis[x, y, nin, nout] * params.weight[d, nin, cin, nout, cout]
+function (c::R2Conv)(f, params, states)
+    (; gspace, representation, x) = f
+    (; ρ_in, ρ_out, conv) = c
+    @assert representation == ρ_in
+    @tensor weight[kx, ky, nin, cin, nout, cout] :=
+        states.weightbasis[kx, ky, nin, nout, d] *
+        params.weight[d, cin, cout]
+    kx, ky, n_in, c_in, n_out, c_out = size(weight)
+    weight = reshape(weight, kx, ky, n_in * c_in, n_out * c_out)
     if uses_bias(c)
-        @tensor bias[nout, cout] = state.biasbasis[b, nout] * params.bias[b, nout, cout]
+        @tensor bias[nout, cout] := states.biasbasis[nout, b] * params.bias[b, cout]
+        bias = reshape(bias, :)
         params = (; weight, bias)
     else
         params = (; weight)
     end
-    y, convstate = conv(x, params, state.convstate)
-    y, (; state..., convstate)
+    x = reshape(x, size(x, 1), size(x, 2), n_in * c_in, :)
+    x, convstates = conv(x, params, states.convstates)
+    x = reshape(x, size(x, 1), size(x, 2), n_out, c_out, :)
+    f = FiberField(gspace, ρ_out, x)
+    f, (; states..., convstates)
 end
 
 uses_bias(c::R2Conv) = uses_bias(c.conv)
 uses_bias(c::Conv{N,use_bias}) where {N,use_bias} = use_bias
 
 function Lux.initialparameters(rng::AbstractRNG, c::R2Conv)
-    (; nin, cin, nout, cout, field_out, init_weight, init_bias) = c
-    (; gspace, representation) = field_out
+    (; gspace, ρ_in, ρ_out, c_in, c_out, init_weight, init_bias) = c
     (; group) = gspace
     weightbasis = build_weightbasis(c)
-    b = size(weightbasis, 5)
-    weight = init_weight(rng, b, nin, cin, nout, cout)
+    d = size(weightbasis, 5)
+    weight = init_weight(rng, d, c_in, c_out)
     if uses_bias(c)
         # One bias degree of freedom for each trivial output representation
-        ψ = trivial_representation(group)
-        nbias = sum(==(ψ.freq), frequencies(representation))
-        bias = init_bias(rng, nbias, nout, cout)
+        nbias = sum(f -> istrivial(Irrep(group, f)), frequencies(ρ_out))
+        bias = init_bias(rng, nbias, c_out)
         (; weight, bias)
     else
         (; weight)
@@ -66,25 +71,27 @@ function Lux.initialparameters(rng::AbstractRNG, c::R2Conv)
 end
 
 function Lux.initialstates(rng::AbstractRNG, c::R2Conv)
-    conv = Lux.initialstates(rng, c.conv)
-    state = (; conv, weigthbasis = build_weightbasis(c))
+    convstates = Lux.initialstates(rng, c.conv)
+    states = (; convstates, weightbasis = build_weightbasis(c))
     if uses_bias(c)
-        state = (; state..., biasbasis = build_biasbasis(c))
+        states = (; states..., biasbasis = build_biasbasis(c))
     end
-    state
+    states
 end
 
 function build_biasbasis(c::R2Conv)
-    (; field_out) = c
-    (; gspace, representation) = field_out
+    (; gspace, ρ_out) = c
     (; group) = gspace
-    ψ = trivial_representation(group)
-    trivials = map(==(ψ.freq), frequencies(representation))
-    basis(representation)[:, trivials]
+    irreps = map(f -> Irrep(group, f), frequencies(ρ_out))
+    trivials = map(ψ -> istrivial(ψ), irreps)
+    s = map(ψ -> size(ψ, 1), irreps)
+    stops = cumsum(s)
+    # Trivials are 1x1
+    basis(ρ_out)[:, stops[trivials]]
 end
 
 function build_weightbasis(c::R2Conv)
-    (; field_in, field_out, conv) = c
+    (; gspace, ρ_in, ρ_out, conv) = c
     (; kernel_size, dilation) = conv
     kernel_size, dilation = kernel_size[1], dilation[1]
 
@@ -97,21 +104,21 @@ function build_weightbasis(c::R2Conv)
     angles = @. atan(y, x)
 
     # Build radial basis
-    basis = map(rings, σ, cutoffs) do ring, σ, cutoff
+    b = map(rings, σ, cutoffs) do ring, σ, cutoff
         radial_profile = GaussianRadialProfile(ring, σ).(radii)
         angular_basis = build_angular_basis(;
             gspace,
             angles,
-            ρ_in = field_in.representation,
-            ρ_out = field_out.representation,
+            ρ_in,
+            ρ_out,
             σ,
             maximum_frequency = cutoff,
         )
         radial_profile .* angular_basis
     end
-    basis = stack(basis; dims = 4)
-    _, sz... = size(basis)
-    reshape(basis, kernel_size, kernel_size, sz...)
+    b = cat(b...; dims = 4)
+    s = size(b)
+    reshape(b, kernel_size, kernel_size, s[2], s[3], :)
 end
 
 get_grid_coords(d, kernel_size, dilation) =
