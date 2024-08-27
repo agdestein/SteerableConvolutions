@@ -16,7 +16,6 @@ params, states = Lux.setup(rng, c);
 states.weightbasis |> size
 params.weight |> size
 
-
 w = reshape(states.weightbasis, kernel_size, kernel_size, :)
 o = Observable(w[:, :, 1])
 fig = heatmap(o; figure = (; size = (600, 600)), axis = (; aspect = DataAspect()))
@@ -28,7 +27,7 @@ end
 hm(x) = heatmap(x; figure = (; size = (600, 600)), axis = (; aspect = DataAspect()))
 
 let
-i = 9
-j = 23
-states.weightbasis[:, :, 1, i, j] |> hm
+    i = 9
+    j = 23
+    states.weightbasis[:, :, 1, i, j] |> hm
 end

@@ -16,7 +16,7 @@ mask(x, y) = (x - 1500)^2 + (y - 1500)^2 < 1500^2
 
 img = @. img * mask(i, i')
 
-img = imresize(img, ratio=1/6)
+img = imresize(img; ratio = 1 / 6)
 size(img)
 k = size(img, 1)
 img
@@ -71,7 +71,15 @@ SteerNN = let
     #     # R2Conv(gspace, ρ => ψ, 5 => 3; kernel_size, use_bias = false, pad = SamePad()),
     # )
     chain = Chain(
-        R2Conv(gspace, ψ => ρ, 3 => 5; activation = relu, kernel_size, use_bias = true, pad = SamePad()),
+        R2Conv(
+            gspace,
+            ψ => ρ,
+            3 => 5;
+            activation = relu,
+            kernel_size,
+            use_bias = true,
+            pad = SamePad(),
+        ),
         # R2Conv(gspace, ρ => ψ, 5 => 5; activation = relu, kernel_size, use_bias = true, pad = SamePad()),
         R2Conv(gspace, ρ => ψ, 5 => 3; kernel_size, use_bias = false, pad = SamePad()),
     )
@@ -110,11 +118,7 @@ function compare(NN, f, g)
     NNf = NN(f)
     NNgf = NN(g * f)
     gNNf = g * NNf
-    hcat(
-        NNf |> fiberfield2rgb,
-        gNNf |> fiberfield2rgb,
-        NNgf |> fiberfield2rgb,
-    )
+    hcat(NNf |> fiberfield2rgb, gNNf |> fiberfield2rgb, NNgf |> fiberfield2rgb)
 end
 
 compare(SteerNN, f, g)

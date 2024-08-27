@@ -58,7 +58,7 @@ w = reshape(w, kernel_size, kernel_size, :)
 
 o = Observable(w[:, :, 1])
 heatmap(o)
-for i in 1:size(w, 3)
+for i = 1:size(w, 3)
     o[] = w[:, :, i]
     sleep(0.1)
 end
@@ -77,7 +77,6 @@ cf, _ = c(f, params, states)
 gcf = g * cf
 gf = g * f
 cgf, _ = c(gf, params, states)
-
 
 gcf.x
 cgf.x
@@ -112,12 +111,18 @@ cgf.x[25, 25, 4]
 using LinearAlgebra
 norm(gcf.x - cgf.x) / norm(gcf.x)
 
-
 ρ = Irrep(G, 0)
 ρ_hidden = regular_representation(G)
 
 c = Chain(
-    R2Conv(gspace, ρ => ρ_hidden, 1 => 1; activation = relu, kernel_size = 5, use_bias = true),
+    R2Conv(
+        gspace,
+        ρ => ρ_hidden,
+        1 => 1;
+        activation = relu,
+        kernel_size = 5,
+        use_bias = true,
+    ),
     R2Conv(gspace, ρ_hidden => ρ, 1 => 1; kernel_size = 5, use_bias = false),
 )
 

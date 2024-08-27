@@ -24,15 +24,20 @@ function R2Conv(
     ρ_in, ρ_out = representations
     c_in, c_out = channels
     n_in, n_out = size(ρ_in, 1), size(ρ_out, 1)
-    conv = Conv((kernel_size, kernel_size), c_in * n_in => c_out * n_out, activation; use_bias, kwargs...)
+    conv = Conv(
+        (kernel_size, kernel_size),
+        c_in * n_in => c_out * n_out,
+        activation;
+        use_bias,
+        kwargs...,
+    )
     R2Conv(gspace, ρ_in, ρ_out, c_in, c_out, init_weight, init_bias, conv)
 end
 
 function (c::R2Conv)(x, params, states)
     (; conv) = c
     @tensor weight[kx, ky, nin, cin, nout, cout] :=
-        states.weightbasis[kx, ky, nin, nout, d] *
-        params.weight[d, cin, cout]
+        states.weightbasis[kx, ky, nin, nout, d] * params.weight[d, cin, cout]
     kx, ky, n_in, c_in, n_out, c_out = size(weight)
     weight = reshape(weight, kx, ky, n_in * c_in, n_out * c_out)
     if uses_bias(c)

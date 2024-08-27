@@ -39,7 +39,7 @@ function build_angular_basis(; gspace, angles, ρ_in, ρ_out, σ, maximum_freque
         # Resulting size: (npoint, a, b, d)
         # where a is the size of ρ_in and b is the size of ρ_out
         s = size(κ)
-        if s[4] == 0 
+        if s[4] == 0
             k = zeros(s[1], size(A, 2), size(B, 1), 0)
         else
             @tensor k[x, a, b, d] := B[b, β] * κ[x, β, α, d] * A[α, a]
@@ -156,7 +156,7 @@ function Base.:*(g::Element, f::FiberField)
     (; group, dim) = gspace
     k, _, nfeat, s... = size(x)
     x = reshape(x, k, k, nfeat, :)
-    
+
     A = basespace_action(gspace)(inv(g))
     @assert dim == 2 "Only 2D for now."
     R = representation(g)
